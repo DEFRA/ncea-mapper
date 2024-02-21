@@ -14,7 +14,7 @@ public static class ServiceBusServiceForTests
     public static ServiceBusService Get(out Mock<ServiceBusSender> mockServiceBusSender,
                                         out Mock<ServiceBusProcessor> mockServiceBusProcessor)
     {
-        var appSettings = Options.Create(new MapperConfigurations() { Processor = new Processor() { ProcessorType = It.IsAny<ProcessorType>() } });
+        var appSettings = new MapperConfigurations() {  ProcessorType = It.IsAny<ProcessorType>() };
         var mockServiceBusClient = new Mock<ServiceBusClient>();
         mockServiceBusSender = new Mock<ServiceBusSender>();
         mockServiceBusProcessor = new Mock<ServiceBusProcessor>();
@@ -29,7 +29,7 @@ public static class ServiceBusServiceForTests
     public static ServiceBusService GetServiceBusWithError(out Mock<ServiceBusSender> mockServiceBusSender,
                                                            out Mock<ServiceBusProcessor> mockServiceBusProcessor)
     {
-        var appSettings = Options.Create(new MapperConfigurations() { Processor = new Processor() { ProcessorType = It.IsAny<ProcessorType>() } });
+        var appSettings = new MapperConfigurations() { ProcessorType = It.IsAny<ProcessorType>() };
         var mockServiceBusClient = new Mock<ServiceBusClient>();
         mockServiceBusSender = new Mock<ServiceBusSender>();
         mockServiceBusProcessor = new Mock<ServiceBusProcessor>();

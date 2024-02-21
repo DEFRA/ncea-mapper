@@ -11,24 +11,17 @@ namespace Ncea.Mapper.Processors;
 
 public class JnccProcessor : IProcessor
 {
-    private readonly IApiClient _apiClient;
     private readonly IServiceBusService _serviceBusService;
-    private readonly IBlobService _blobService;
     private readonly ILogger<JnccProcessor> _logger;
     private readonly MapperConfigurations _mapperConfigurations;
 
-    public JnccProcessor(IApiClient apiClient, 
-        IServiceBusService serviceBusService, 
-        IBlobService blobService,
-        ILogger<JnccProcessor> logger,
-        IOptions<MapperConfigurations> mapperConfigurations)
+    public JnccProcessor(IServiceBusService serviceBusService, 
+                        ILogger<JnccProcessor> logger,
+                        MapperConfigurations mapperConfigurations)
     {
-        _apiClient = apiClient;
-        _mapperConfigurations = mapperConfigurations.Value;
-        _apiClient.CreateClient(_mapperConfigurations.Processor.DataSourceApiBase);
+        _mapperConfigurations = mapperConfigurations;
         _serviceBusService = serviceBusService;
         _logger = logger;
-        _blobService = blobService;
     }
     public Task Process(CancellationToken cancellationToken = default)
     {
@@ -41,7 +34,6 @@ public class JnccProcessor : IProcessor
     {
         var processedMessage = message;
         _logger.LogInformation(processedMessage);
-        _logger.LogInformation(nameof(_blobService));
         await _serviceBusService.SendMessageAsync(message);
     }
 }

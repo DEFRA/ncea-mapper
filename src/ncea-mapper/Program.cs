@@ -24,8 +24,10 @@ builder.Services.AddHostedService<Worker>();
 builder.Services.Configure<MapperConfigurations>(configuration.GetSection("MapperConfigurations"));
 builder.Services.AddHttpClient();
 
-var processorType = configuration.GetValue<string>("MapperConfigurations:Processor:ProcessorType");
-var dataSourceName = Enum.Parse(typeof(ProcessorType), processorType!).ToString()!.ToLowerInvariant();
+var dataSource = configuration.GetValue<string>("DataSource");
+var dataSourceName = Enum.Parse(typeof(ProcessorType), dataSource!).ToString()!.ToLowerInvariant();
+var processorType = (ProcessorType)Enum.Parse(typeof(ProcessorType), dataSource!);
+var mapperConfigurations = configuration.GetSection("HarvesterConfigurations").Get<List<MapperConfigurations>>()!;
 
 
 ConfigureKeyVault(configuration, builder);
@@ -33,20 +35,21 @@ ConfigureLogging(builder);
 await ConfigureBlobStorage(configuration, builder, dataSourceName);
 await ConfigureServiceBusQueue(configuration, builder, dataSourceName);
 ConfigureServices(builder);
-ConfigureProcessor(builder, configuration);
+ConfigureProcessor(builder, mapperConfigurations, processorType);
 
 var host = builder.Build();
 host.Run();
 
-static void ConfigureProcessor(HostApplicationBuilder builder, IConfiguration configuration)
+static void ConfigureProcessor(HostApplicationBuilder builder, IList<MapperConfigurations> mapperConfigurations, ProcessorType processorType)
 {
-    var processorTypeName = configuration.GetValue<string>("MapperConfigurations:Processor:Type");
+    var harvsesterConfiguration = mapperConfigurations.Single(x => x.ProcessorType == processorType);
     var assembly = typeof(Program).Assembly;
-    var type = assembly.GetType(processorTypeName!);
+    var type = assembly.GetType(harvsesterConfiguration.Type);
 
     if (type != null)
     {
         builder.Services.AddSingleton(typeof(IProcessor), type);
+        builder.Services.AddSingleton(typeof(MapperConfigurations), mapperConfigurations);
     }
 }
 

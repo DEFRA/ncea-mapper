@@ -15,14 +15,14 @@ public class ServiceBusService : IServiceBusService
     private readonly string _serviceBusMapperQueueName;
     private readonly ILogger<ServiceBusService> _logger;
     private Func<string, Task>? _messageHandler;
-    private ServiceBusProcessor _processor;
-    public ServiceBusService(IOptions<MapperConfigurations> mapperConfigurations, 
+    private ServiceBusProcessor _processor = null!;
+    public ServiceBusService(MapperConfigurations mapperConfigurations, 
                              ServiceBusClient queueClient,
                              ILogger<ServiceBusService> logger)
     {
         _queueClient = queueClient;
-        _serviceBusHarvesterQueueName = $"{mapperConfigurations.Value.Processor.ProcessorType}-harvester-queue";
-        _serviceBusMapperQueueName = $"{mapperConfigurations.Value.Processor.ProcessorType}-mapper-queue";
+        _serviceBusHarvesterQueueName = $"{mapperConfigurations.ProcessorType}-harvester-queue";
+        _serviceBusMapperQueueName = $"{mapperConfigurations.ProcessorType}-mapper-queue";
         _logger = logger;
     }
 

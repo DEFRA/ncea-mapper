@@ -18,24 +18,13 @@ public class JnccProcessorTests
         //Arrange
         var serviceBusService = ServiceBusServiceForTests.Get(out Mock<ServiceBusSender> mockServiceBusSender,
                                                               out Mock<ServiceBusProcessor> mockServiceBusProcessor);
-        var expectedData = "<html><body><a href=\"a.xml\">a</a><a href=\"b.xml\">b</a></body></html>";
-        var httpResponse = new HttpResponseMessage
-        {
-            StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(expectedData),
-        };
-        var apiClient = ApiClientForTests.Get(httpResponse);
-        var appSettings = Options.Create(new MapperConfigurations() { Processor = new Processor() { DataSourceApiBase="https://base-uri", DataSourceApiUrl="/test-url", ProcessorType= ProcessorType.Jncc, Type=""} });
-        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
-                                              out Mock<BlobContainerClient> mockBlobContainerClient,
-                                              out Mock<BlobClient> mockBlobClient);
+        var appSettings = new MapperConfigurations() {  DataSourceApiBase="https://base-uri", DataSourceApiUrl="/test-url", ProcessorType= ProcessorType.Jncc, Type="" };
         var logger = new Logger<JnccProcessor>(new LoggerFactory());
         // Act
-        var jnccService = new JnccProcessor(apiClient, serviceBusService, blobService, logger, appSettings);
+        var jnccService = new JnccProcessor(serviceBusService, logger, appSettings);
         await jnccService.Process();
 
         // Assert
-        //mockServiceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), default), Times.Exactly(2));
         mockServiceBusProcessor.Verify(x => x.StartProcessingAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -45,70 +34,14 @@ public class JnccProcessorTests
         //Arrange
         var serviceBusService = ServiceBusServiceForTests.Get(out Mock<ServiceBusSender> mockServiceBusSender,
                                                               out Mock<ServiceBusProcessor> mockServiceBusProcessor);
-        var expectedData = "<html><body></body></html>";
-        var httpResponse = new HttpResponseMessage
-        {
-            StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(expectedData),
-        };
-        var apiClient = ApiClientForTests.Get(httpResponse);
-        var appSettings = Options.Create(new MapperConfigurations() { Processor = new Processor() { DataSourceApiBase = "https://base-uri", DataSourceApiUrl = "/test-url", ProcessorType = ProcessorType.Jncc, Type = "" } });
-        var blobServiceMock = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
-                                                      out Mock<BlobContainerClient> mockBlobContainerClient,
-                                                      out Mock<BlobClient> mockBlobClient);
+        var appSettings = new MapperConfigurations() { DataSourceApiBase = "https://base-uri", DataSourceApiUrl = "/test-url", ProcessorType = ProcessorType.Jncc, Type = "" };
         var loggerMock = new Mock<ILogger<JnccProcessor>>();
 
         // Act
-        var jnccService = new JnccProcessor(apiClient, serviceBusService, blobServiceMock, loggerMock.Object, appSettings);
+        var jnccService = new JnccProcessor(serviceBusService, loggerMock.Object, appSettings);
         await jnccService.Process();
 
         // Assert
         mockServiceBusProcessor.Verify(x => x.StartProcessingAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
-
-    //[Fact]
-    //public async Task HandleMessage_ShouldSendMessagesToServiceBus()
-    //{
-    //    //Arrange
-    //    var serviceBusService = ServiceBusServiceForTests.Get(out Mock<ServiceBusSender> mockServiceBusSender,
-    //                                                          out Mock<ServiceBusProcessor> mockServiceBusProcessor);
-    //    var expectedData = "<html><body><a href=\"a.xml\">a</a><a href=\"b.xml\">b</a></body></html>";
-    //    var httpResponse = new HttpResponseMessage
-    //    {
-    //        StatusCode = HttpStatusCode.OK,
-    //        Content = new StringContent(expectedData),
-    //    };
-    //    var apiClient = ApiClientForTests.Get(httpResponse);
-    //    var appSettings = Options.Create(new MapperConfigurations() { Processor = new Processor() { DataSourceApiBase = "https://base-uri", DataSourceApiUrl = "/test-url", ProcessorType = ProcessorType.Jncc, Type = "" } });
-    //    var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
-    //                                          out Mock<BlobContainerClient> mockBlobContainerClient,
-    //                                          out Mock<BlobClient> mockBlobClient);
-    //    var mockLogger = new Mock<ILogger<JnccProcessor>>(MockBehavior.Strict);
-    //    mockLogger.Setup(x => x.Log(
-    //            LogLevel.Information,
-    //            It.IsAny<EventId>(),
-    //            It.IsAny<It.IsAnyType>(),
-    //            It.IsAny<Exception>(),
-    //            It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-    //        )
-    //    );
-
-    //    // Act
-    //    var jnccService = new JnccProcessor(apiClient, serviceBusService, blobService, mockLogger.Object, appSettings);
-    //    await jnccService.HandleMessage("test-message");
-
-    //    // Assert
-    //    mockServiceBusSender.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), default), Times.Exactly(1));
-    //    mockLogger.Verify(
-    //        m => m.Log(
-    //            LogLevel.Information,
-    //            It.IsAny<EventId>(),
-    //            It.IsAny<It.IsAnyType>(),
-    //            It.IsAny<Exception>(),
-    //            It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-    //        Times.Exactly(2),
-    //        It.IsAny<string>()
-    //    );
-
-    //}
 }

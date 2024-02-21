@@ -15,7 +15,7 @@ pool:
 #   AzureSubscription: az-subscription
 #   AzureContainerRegistry: xx.azurecr.io
 #   dockerFileName: DockerFile
-#   imageName: '$ncea.harvester:$(Build.BuildId)'
+#   imageName: '$ncea.mapper:$(Build.BuildId)'
 #   ACR.Deploy: false
 
 steps:

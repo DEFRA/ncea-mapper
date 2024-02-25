@@ -5,6 +5,7 @@ using Ncea.Mapper.Infrastructure;
 using Ncea.Mapper.Infrastructure.Contracts;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Tests.Clients;
+using System.Reflection;
 
 namespace Ncea.Mapper.Tests.Infrastructure;
 
@@ -63,15 +64,17 @@ public class ServiceBusServiceTests
                                     out Mock<ILogger<ServiceBusService>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
-
-        // Act
         var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
-        var args = new ProcessErrorEventArgs(It.IsAny<Exception>(), It.IsAny<ServiceBusErrorSource>(), 
-                                             It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), 
+        var args = new ProcessErrorEventArgs(It.IsAny<Exception>(), It.IsAny<ServiceBusErrorSource>(),
+                                             It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                                              It.IsAny<CancellationToken>());
-        var errorHandlerMethod = typeof(ServiceBusService).GetMethod("ErrorHandlerAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var task = (Task)(errorHandlerMethod?.Invoke(service, new object[] { args }));
-        await task;
+        var errorHandlerMethod = typeof(ServiceBusService).GetMethod("ErrorHandlerAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+        var task = (Task?)errorHandlerMethod?.Invoke(service, new object[] { args });
+
+
+        // Act        
+        if (task != null) await task;
+
 
         // Assert
         loggerMock.Verify(x => x.Log(LogLevel.Error, 
@@ -79,7 +82,7 @@ public class ServiceBusServiceTests
             It.IsAny<It.IsAnyType>(), 
             It.IsAny<Exception>(), 
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
-        Assert.True(task.IsCompleted);
+        Assert.True(task?.IsCompleted);
     }
 
     //[Fact]

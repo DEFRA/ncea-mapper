@@ -65,11 +65,11 @@ public class MedinProcessorTests
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         var medinService = new MedinProcessor(mockServiceBusService.Object, loggerMock.Object, appSettings);
         var handleMessageMethod = typeof(MedinProcessor).GetMethod("HandleMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var task = (Task)handleMessageMethod?.Invoke(medinService, new object[] { "test-param" });
+        var task = (Task?)handleMessageMethod?.Invoke(medinService, new object[] { "test-param" });
 
 
         // Act
-        await task;
+        if(task != null) await task;
 
 
         // Assert

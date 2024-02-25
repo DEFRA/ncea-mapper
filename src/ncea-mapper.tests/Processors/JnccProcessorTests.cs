@@ -60,11 +60,11 @@ public class JnccProcessorTests
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         var jnccService = new JnccProcessor(mockServiceBusService.Object, loggerMock.Object, appSettings);
         var handleMessageMethod = typeof(JnccProcessor).GetMethod("HandleMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var task = (Task)handleMessageMethod?.Invoke(jnccService, new object[] { "test-param" });
+        var task = (Task?)handleMessageMethod?.Invoke(jnccService, new object[] { "test-param" });
 
 
         // Act
-        await task;
+        if(task != null) await task;
 
 
         // Assert

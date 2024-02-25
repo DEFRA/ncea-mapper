@@ -108,8 +108,8 @@ public class ServiceBusServiceTests
         service.CreateProcessor((string message) => { return Task.CompletedTask; });
 
         var processMessagesAsyncMethod = typeof(ServiceBusService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var task = (Task)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
-        await task;
+        var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
+        if(task != null) await task;
 
         // Assert
         mockProcessMessageEventArgs.Verify(x => x.CompleteMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -136,10 +136,9 @@ public class ServiceBusServiceTests
         // Act
         var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
         service.CreateProcessor((string message) => { return Task.CompletedTask; });
-
         var processMessagesAsyncMethod = typeof(ServiceBusService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        var task = (Task)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
-        await task;
+        var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
+        if(task != null) await task;
 
         // Assert
         loggerMock.Verify(x => x.Log(LogLevel.Error,

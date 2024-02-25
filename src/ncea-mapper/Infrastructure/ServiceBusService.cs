@@ -26,12 +26,23 @@ public class ServiceBusService : IServiceBusService
         _logger = logger;
     }
 
-    public void CreateProcessor(Func<string, Task>? messageHandler)
+    public ServiceBusProcessor CreateProcessor(Func<string, Task>? messageHandler)
     {
         _processor = _queueClient.CreateProcessor(_serviceBusHarvesterQueueName, new ServiceBusProcessorOptions() { AutoCompleteMessages = false });
         _messageHandler = messageHandler;
+        return _processor;
+    }
+
+    public async Task StartProcessingAsync(CancellationToken cancellationToken = default)
+    {
         _processor.ProcessMessageAsync += ProcessMessagesAsync;
         _processor.ProcessErrorAsync += ErrorHandlerAsync;
+        await _processor.StartProcessingAsync(cancellationToken);
+    }
+
+    public async Task StopProcessingAsync(CancellationToken cancellationToken = default)
+    {
+        await _processor.StopProcessingAsync(cancellationToken);
     }
 
     private async Task ProcessMessagesAsync(ProcessMessageEventArgs args)
@@ -55,17 +66,7 @@ public class ServiceBusService : IServiceBusService
         return Task.CompletedTask;
     }
 
-    public async Task StartProcessingAsync(CancellationToken cancellationToken = default)
-    {
-        await _processor.StartProcessingAsync(cancellationToken);
-    }
-
-    public async Task StopProcessingAsync(CancellationToken cancellationToken = default)
-    {
-        await _processor.StopProcessingAsync(cancellationToken);
-    }
-
-    public async Task SendMessageAsync(string message)
+    public async Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
     {
         var sender = _queueClient.CreateSender(_serviceBusMapperQueueName);
         var messageInBytes = Encoding.UTF8.GetBytes(message);

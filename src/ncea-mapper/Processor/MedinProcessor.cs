@@ -24,8 +24,8 @@ public class MedinProcessor : IProcessor
     }
     public Task Process(CancellationToken cancellationToken = default)
     {
-        _serviceBusService.CreateProcessor(HandleMessage);
-        _serviceBusService.StartProcessingAsync(cancellationToken);
+        var processor = _serviceBusService.CreateProcessor(HandleMessage);
+        processor.StartProcessingAsync(cancellationToken);
         return Task.CompletedTask;
     }
 

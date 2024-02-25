@@ -85,30 +85,68 @@ public class ServiceBusServiceTests
         Assert.True(task?.IsCompleted);
     }
 
-    //[Fact]
-    //public async Task ProcessMessagesAsync_Should_CompleteMessageAsync()
-    //{
-    //    // Arrange
-    //    ServiceBusServiceForTests.Get(out MapperConfigurations appSettings,
-    //                                out Mock<ServiceBusClient> mockServiceBusClient,
-    //                                out Mock<IServiceBusService> mockServiceBusService,
-    //                                out Mock<ILogger<ServiceBusService>> loggerMock,
-    //                                out Mock<ServiceBusSender> mockServiceBusSender,
-    //                                out Mock<ServiceBusProcessor> mockServiceBusProcessor);
-    //    var mockProcessMessageEventArgs = new Mock<ProcessMessageEventArgs>();
-    //    var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData("message"), messageId: "messageId");
-    //    var processMessageEventArgs = new ProcessMessageEventArgs(receivedMessage, It.IsAny<ServiceBusReceiver>(), It.IsAny<CancellationToken>());
-    //    mockProcessMessageEventArgs.SetupProperty(x => x.Message, receivedMessage);
+    [Fact]
+    public async Task ProcessMessagesAsync_Should_CompleteMessageAsync()
+    {
+        // Arrange
+        ServiceBusServiceForTests.Get(out MapperConfigurations appSettings,
+                                    out Mock<ServiceBusClient> mockServiceBusClient,
+                                    out Mock<IServiceBusService> mockServiceBusService,
+                                    out Mock<ILogger<ServiceBusService>> loggerMock,
+                                    out Mock<ServiceBusSender> mockServiceBusSender,
+                                    out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        
+        var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData("message"), messageId: "messageId");
+        var mockReceiver = new Mock<ServiceBusReceiver>();
+        mockServiceBusClient.Setup(x => x.CreateReceiver(It.IsAny<string>())).Returns(mockReceiver.Object);
+        var processMessageEventArgs = new ProcessMessageEventArgs(receivedMessage, It.IsAny<ServiceBusReceiver>(), It.IsAny<CancellationToken>());
+        var mockProcessMessageEventArgs = new Mock<ProcessMessageEventArgs>(MockBehavior.Strict, new object[] { receivedMessage, mockReceiver.Object, It.IsAny<string>(), It.IsAny<CancellationToken>() });
+        mockProcessMessageEventArgs.Setup(receiver => receiver.CompleteMessageAsync(It.IsAny<ServiceBusReceivedMessage>(),It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
+        // Act
+        var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
+        service.CreateProcessor((string message) => { return Task.CompletedTask; });
 
-    //    // Act
-    //    var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
+        var processMessagesAsyncMethod = typeof(ServiceBusService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var task = (Task)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
+        await task;
 
-    //    var processMessagesAsyncMethod = typeof(ServiceBusService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-    //    var task = (Task)(processMessagesAsyncMethod?.Invoke(service, new object[] { processMessageEventArgs }));
-    //    await task;
+        // Assert
+        mockProcessMessageEventArgs.Verify(x => x.CompleteMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
 
-    //    // Assert
-    //    mockProcessMessageEventArgs.Verify(x => x.CompleteMessageAsync(It.IsAny<ServiceBusReceivedMessage>(),It.IsAny<CancellationToken>()),Times.Once);
-    //}
+    [Fact]
+    public async Task ProcessMessagesAsync_WithError_Should_AbandonMessageAsync()
+    {
+        // Arrange
+        ServiceBusServiceForTests.Get(out MapperConfigurations appSettings,
+                                    out Mock<ServiceBusClient> mockServiceBusClient,
+                                    out Mock<IServiceBusService> mockServiceBusService,
+                                    out Mock<ILogger<ServiceBusService>> loggerMock,
+                                    out Mock<ServiceBusSender> mockServiceBusSender,
+                                    out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+
+        var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: null, messageId: "messageId");
+        var mockReceiver = new Mock<ServiceBusReceiver>();
+        mockServiceBusClient.Setup(x => x.CreateReceiver(It.IsAny<string>())).Returns(mockReceiver.Object);
+        var processMessageEventArgs = new ProcessMessageEventArgs(receivedMessage, It.IsAny<ServiceBusReceiver>(), It.IsAny<CancellationToken>());
+        var mockProcessMessageEventArgs = new Mock<ProcessMessageEventArgs>(MockBehavior.Strict, new object[] { receivedMessage, mockReceiver.Object, It.IsAny<string>(), It.IsAny<CancellationToken>() });
+        mockProcessMessageEventArgs.Setup(x => x.AbandonMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<IDictionary<string, object>>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+        // Act
+        var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
+        service.CreateProcessor((string message) => { return Task.CompletedTask; });
+
+        var processMessagesAsyncMethod = typeof(ServiceBusService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var task = (Task)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
+        await task;
+
+        // Assert
+        loggerMock.Verify(x => x.Log(LogLevel.Error,
+            It.IsAny<EventId>(),
+            It.IsAny<It.IsAnyType>(),
+            It.IsAny<Exception>(),
+            It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
+        mockProcessMessageEventArgs.Verify(x => x.AbandonMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<IDictionary<string, object>>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

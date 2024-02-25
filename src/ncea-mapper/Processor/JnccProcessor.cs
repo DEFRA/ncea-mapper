@@ -13,13 +13,10 @@ public class JnccProcessor : IProcessor
 {
     private readonly IServiceBusService _serviceBusService;
     private readonly ILogger<JnccProcessor> _logger;
-    private readonly MapperConfigurations _mapperConfigurations;
 
     public JnccProcessor(IServiceBusService serviceBusService, 
-                        ILogger<JnccProcessor> logger,
-                        MapperConfigurations mapperConfigurations)
+                        ILogger<JnccProcessor> logger)
     {
-        _mapperConfigurations = mapperConfigurations;
         _serviceBusService = serviceBusService;
         _logger = logger;
     }

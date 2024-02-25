@@ -12,13 +12,10 @@ public class MedinProcessor : IProcessor
 {
     private readonly IServiceBusService _serviceBusService;
     private readonly ILogger<MedinProcessor> _logger;
-    private readonly MapperConfigurations _mapperConfigurations;
 
     public MedinProcessor(IServiceBusService serviceBusService,
-                        ILogger<MedinProcessor> logger,
-                        MapperConfigurations mapperConfigurations)
+                        ILogger<MedinProcessor> logger)
     {
-        _mapperConfigurations = mapperConfigurations;
         _serviceBusService = serviceBusService;
         _logger = logger;
     }

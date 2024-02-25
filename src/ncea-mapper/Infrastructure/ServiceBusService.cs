@@ -62,7 +62,7 @@ public class ServiceBusService : IServiceBusService
 
     private Task ErrorHandlerAsync(ProcessErrorEventArgs args)
     {
-        _logger.LogError($"Error processing message: {args.Exception}");
+        _logger.LogError($"Error processing message: {args.Exception.Message}");
         return Task.CompletedTask;
     }
 
@@ -71,6 +71,6 @@ public class ServiceBusService : IServiceBusService
         var sender = _queueClient.CreateSender(_serviceBusMapperQueueName);
         var messageInBytes = Encoding.UTF8.GetBytes(message);
         var serviceBusMessage = new ServiceBusMessage(messageInBytes);
-        await sender.SendMessageAsync(serviceBusMessage);
+        await sender.SendMessageAsync(serviceBusMessage, cancellationToken);
     }
 }

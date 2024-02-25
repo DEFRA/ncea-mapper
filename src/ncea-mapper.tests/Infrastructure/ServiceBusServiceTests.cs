@@ -65,7 +65,7 @@ public class ServiceBusServiceTests
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
-        var args = new ProcessErrorEventArgs(It.IsAny<Exception>(), It.IsAny<ServiceBusErrorSource>(),
+        var args = new ProcessErrorEventArgs(new Exception("test-exception"), It.IsAny<ServiceBusErrorSource>(),
                                              It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                                              It.IsAny<CancellationToken>());
         var errorHandlerMethod = typeof(ServiceBusService).GetMethod("ErrorHandlerAsync", BindingFlags.NonPublic | BindingFlags.Instance);

@@ -26,7 +26,7 @@ public class MedinProcessorTests
                                               out Mock<BlobClient> mockBlobClient);
         
         // Act
-        var medinService = new MedinProcessor(mockServiceBusService.Object, loggerMock.Object, appSettings);
+        var medinService = new MedinProcessor(mockServiceBusService.Object, loggerMock.Object);
         await medinService.Process();
 
         // Assert
@@ -46,7 +46,7 @@ public class MedinProcessorTests
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
 
         // Act
-        var medinService = new MedinProcessor(mockServiceBusService.Object, loggerMock.Object, appSettings);
+        var medinService = new MedinProcessor(mockServiceBusService.Object, loggerMock.Object);
         await medinService.Process();
 
         // Assert
@@ -63,7 +63,7 @@ public class MedinProcessorTests
                                     out Mock<ILogger<MedinProcessor>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
-        var medinService = new MedinProcessor(mockServiceBusService.Object, loggerMock.Object, appSettings);
+        var medinService = new MedinProcessor(mockServiceBusService.Object, loggerMock.Object);
         var handleMessageMethod = typeof(MedinProcessor).GetMethod("HandleMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var task = (Task?)handleMessageMethod?.Invoke(medinService, new object[] { "test-param" });
 

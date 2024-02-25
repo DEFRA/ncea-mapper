@@ -21,7 +21,7 @@ public class JnccProcessorTests
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         var logger = new Logger<JnccProcessor>(new LoggerFactory());
         // Act
-        var jnccService = new JnccProcessor(mockServiceBusService.Object, logger, appSettings);
+        var jnccService = new JnccProcessor(mockServiceBusService.Object, logger);
         await jnccService.Process();
 
         // Assert
@@ -41,7 +41,7 @@ public class JnccProcessorTests
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
 
         // Act
-        var jnccService = new JnccProcessor(mockServiceBusService.Object, loggerMock.Object, appSettings);
+        var jnccService = new JnccProcessor(mockServiceBusService.Object, loggerMock.Object);
         await jnccService.Process();
 
         // Assert
@@ -58,7 +58,7 @@ public class JnccProcessorTests
                                     out Mock<ILogger<JnccProcessor>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
-        var jnccService = new JnccProcessor(mockServiceBusService.Object, loggerMock.Object, appSettings);
+        var jnccService = new JnccProcessor(mockServiceBusService.Object, loggerMock.Object);
         var handleMessageMethod = typeof(JnccProcessor).GetMethod("HandleMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var task = (Task?)handleMessageMethod?.Invoke(jnccService, new object[] { "test-param" });
 

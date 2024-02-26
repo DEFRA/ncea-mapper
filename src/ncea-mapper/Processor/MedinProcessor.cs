@@ -29,7 +29,7 @@ public class MedinProcessor : IProcessor
     private async Task HandleMessage(string message)
     {
         var processedMessage = message;
-        _logger.LogInformation(processedMessage, []);
+        _logger.LogInformation("Processed Metadata xml:\n{processedMessage}", processedMessage);
         await _serviceBusService.SendMessageAsync(message);
     }
 }

@@ -30,7 +30,7 @@ public class JnccProcessor : IProcessor
     private async Task HandleMessage(string message)
     {
         var processedMessage = message;
-        _logger.LogInformation(processedMessage);
+        _logger.LogInformation(processedMessage, []);
         await _serviceBusService.SendMessageAsync(message);
     }
 }

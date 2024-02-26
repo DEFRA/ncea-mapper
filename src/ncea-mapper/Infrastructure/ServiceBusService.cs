@@ -55,14 +55,14 @@ public class ServiceBusService : IServiceBusService
         } 
         catch(Exception ex)
         {
-            _logger.LogError($"Error processing message: {ex.Message}");
+            _logger.LogError("Error processing message: {ex.Message}", ex.Message);
             await args.AbandonMessageAsync(args.Message);
         }
     }
 
     private Task ErrorHandlerAsync(ProcessErrorEventArgs args)
     {
-        _logger.LogError($"Error processing message: {args.Exception.Message}");
+        _logger.LogError("Error processing message: {args.Exception.Message}", args.Exception.Message);
         return Task.CompletedTask;
     }
 

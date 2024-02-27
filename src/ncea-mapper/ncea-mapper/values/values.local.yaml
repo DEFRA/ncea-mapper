@@ -1,0 +1,57 @@
+replicaCount: 1
+
+image:
+  repository: nceapocsbox.azurecr.io/defra/ncea-harvester-service
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount: 
+  name: "serviceaccount-nceamapper-sbox"
+
+env:
+  serviceBusHostName: nceapocsbox.servicebus.windows.net
+  keyVaultUri: https://nceapocsbox.vault.azure.net/
+
+jobs:    
+  # cron job configurations for medin data source
+  medin:    
+    env:
+    - name: DataSource
+      value: "medin"
+  
+  # cron job configurations for jncc data source
+  jncc:    
+    env:
+    - name: DataSource
+      value: "jncc"
+
+podAnnotations: {}
+podLabels: 
+  azure.workload.identity/use: "true"
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+volumes: []
+
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

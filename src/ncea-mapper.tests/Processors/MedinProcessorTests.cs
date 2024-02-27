@@ -15,16 +15,12 @@ public class MedinProcessorTests
     public async Task Process_ShouldSendMessagesToServiceBus()
     {
         //Arrange
-        ServiceBusServiceForTests.Get<MedinProcessor>(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get<MedinProcessor>(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<MedinProcessor>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
-                                    out Mock<ServiceBusProcessor> mockServiceBusProcessor);
-        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
-                                              out Mock<BlobContainerClient> mockBlobContainerClient,
-                                              out Mock<BlobClient> mockBlobClient);
-        
+                                    out Mock<ServiceBusProcessor> mockServiceBusProcessor);      
         // Act
         var medinService = new MedinProcessor(mockServiceBusService.Object, loggerMock.Object);
         await medinService.Process();
@@ -38,7 +34,7 @@ public class MedinProcessorTests
     public async Task Process_ShouldNotSendMessagesToServiceBus()
     {
         //Arrange
-        ServiceBusServiceForTests.Get<MedinProcessor>(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get<MedinProcessor>(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<MedinProcessor>> loggerMock,
@@ -57,7 +53,7 @@ public class MedinProcessorTests
     public async Task HandleMessage_ShouldSendMessagesToServiceBus()
     {
         //Arrange
-        ServiceBusServiceForTests.Get<MedinProcessor>(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get<MedinProcessor>(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<MedinProcessor>> loggerMock,

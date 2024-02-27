@@ -1,10 +1,7 @@
 ﻿using System.Text;
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.Options;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Infrastructure.Contracts;
-using Ncea.Mapper.Processors.Contracts;
-using Ncea.Mapper.Processors;
 
 namespace Ncea.Mapper.Infrastructure;
 
@@ -16,13 +13,13 @@ public class ServiceBusService : IServiceBusService
     private readonly ILogger<ServiceBusService> _logger;
     private Func<string, Task>? _messageHandler;
     private ServiceBusProcessor _processor = null!;
-    public ServiceBusService(MapperConfigurations mapperConfigurations, 
+    public ServiceBusService(MapperConfiguration mapperConfiguration, 
                              ServiceBusClient queueClient,
                              ILogger<ServiceBusService> logger)
     {
         _queueClient = queueClient;
-        _serviceBusHarvesterQueueName = $"{mapperConfigurations.ProcessorType}-harvester-queue";
-        _serviceBusMapperQueueName = $"{mapperConfigurations.ProcessorType}-mapper-queue";
+        _serviceBusHarvesterQueueName = $"{mapperConfiguration.ProcessorType}-harvester-queue";
+        _serviceBusMapperQueueName = $"{mapperConfiguration.ProcessorType}-mapper-queue";
         _logger = logger;
     }
 

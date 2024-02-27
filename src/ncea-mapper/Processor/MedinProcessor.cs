@@ -1,10 +1,5 @@
-﻿using Microsoft.Extensions.Options;
-using Ncea.Mapper.Infrastructure.Contracts;
-using Ncea.Mapper.Infrastructure.Models.Requests;
-using Ncea.Mapper.Models;
+﻿using Ncea.Mapper.Infrastructure.Contracts;
 using Ncea.Mapper.Processors.Contracts;
-using System.Text;
-using System.Xml.Linq;
 
 namespace Ncea.Mapper.Processors;
 
@@ -21,6 +16,7 @@ public class MedinProcessor : IProcessor
     }
     public Task Process(CancellationToken cancellationToken = default)
     {
+        
         var processor = _serviceBusService.CreateProcessor(HandleMessage);
         processor.StartProcessingAsync(cancellationToken);
         return Task.CompletedTask;

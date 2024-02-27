@@ -1,7 +1,16 @@
+{{- $repository := .Values.image.repository -}}
+{{- $tag := .Values.image.tag -}}
+{{- $imagePullPolicy := .Values.image.imagePullPolicy -}}
+{{- $serviceAccountName := .Values.serviceAccount.name -}}
+
+{{- $serviceBusHostName := .Values.env.serviceBusHostName -}}
+{{- $keyVaultUri := .Values.env.keyVaultUri -}}
+{{- range $jobname, $job := .Values.jobs }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ncea-mapper.fullname" . }}
+  name: {{ include "ncea-mapper.fullname" . }}-{{ $jobname }}
   labels:
     {{- include "ncea-mapper.labels" . | nindent 4 }}
 spec:
@@ -27,27 +36,41 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "ncea-mapper.serviceAccountName" . }}
+      serviceAccountName: {{ $serviceAccountName }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ $jobname }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
+            - name: health-check
+              containerPort: 5000
+              hostPort: 5000
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            tcpSocket:
+              port: health-check
+            initialDelaySeconds: 15
+            failureThreshold: 2
+            timeoutSeconds: 3
+            periodSeconds: 20
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            tcpSocket:
+              port: health-check
+            initialDelaySeconds: 5
+            failureThreshold: 2
+            timeoutSeconds: 3
+            periodSeconds: 10
+            {{- with $job.env }}
+            env:
+                {{ toYaml . | indent 12 }}
+            {{- end }}
+            - name: ServiceBusHostName
+              value: {{ $serviceBusHostName }}
+            - name: KeyVaultUri
+              value: {{ $keyVaultUri }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}

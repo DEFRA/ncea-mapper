@@ -13,7 +13,7 @@ public class JnccProcessorTests
     [Fact]
     public async Task Process_ShouldSendMessagesToServiceBus() {
         //Arrange
-        ServiceBusServiceForTests.Get<JnccProcessor>(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get<JnccProcessor>(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<JnccProcessor>> loggerMock,
@@ -33,7 +33,7 @@ public class JnccProcessorTests
     public async Task Process_ShouldNotSendMessagesToServiceBus()
     {
         //Arrange
-        ServiceBusServiceForTests.Get<JnccProcessor>(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get<JnccProcessor>(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<JnccProcessor>> loggerMock,
@@ -52,7 +52,7 @@ public class JnccProcessorTests
     public async Task HandleMessage_ShouldSendMessagesToServiceBus()
     {
         //Arrange
-        ServiceBusServiceForTests.Get<JnccProcessor>(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get<JnccProcessor>(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<JnccProcessor>> loggerMock,

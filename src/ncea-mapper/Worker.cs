@@ -1,7 +1,5 @@
-using Cronos;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.Extensions.Options;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 using System.Diagnostics.CodeAnalysis;
@@ -13,13 +11,13 @@ public class Worker : BackgroundService
 {
     private readonly ILogger _logger;
     private readonly TelemetryClient _telemetryClient;
-    private readonly MapperConfigurations _mapperConfigurations;
+    private readonly MapperConfiguration _mapperConfiguration;
     private readonly IProcessor _processor;
 
-    public Worker(ILogger<Worker> logger, MapperConfigurations mapperConfigurations, IProcessor processor, TelemetryClient telemetryClient)
+    public Worker(ILogger<Worker> logger, MapperConfiguration mapperConfiguration, IProcessor processor, TelemetryClient telemetryClient)
     {
         _logger = logger;
-        _mapperConfigurations = mapperConfigurations;
+        _mapperConfiguration = mapperConfiguration;
         _processor = processor;
         _telemetryClient = telemetryClient;
     }
@@ -32,9 +30,9 @@ public class Worker : BackgroundService
 
             using (_telemetryClient.StartOperation<RequestTelemetry>("operation"))
             {
-                _logger.LogInformation("Metadata harversting started for {source}", _mapperConfigurations.ProcessorType);
+                _logger.LogInformation("Metadata mapper service started for {source}", _mapperConfiguration.ProcessorType);
                 await _processor.Process(stoppingToken);
-                _logger.LogInformation("Metadata harversting completed");
+                _logger.LogInformation("Metadata Mapper completed");
                 _telemetryClient.TrackEvent("Harvesting completed");
             }
         }

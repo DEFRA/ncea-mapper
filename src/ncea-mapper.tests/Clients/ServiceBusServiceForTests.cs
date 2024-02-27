@@ -12,14 +12,14 @@ namespace Ncea.Mapper.Tests.Clients;
 
 public static class ServiceBusServiceForTests
 {
-    public static void Get<T>(out MapperConfigurations appSettings,
+    public static void Get<T>(out MapperConfiguration appSettings,
                             out Mock<ServiceBusClient> mockServiceBusClient,
                             out Mock<IServiceBusService> mockServiceBusService,
                             out Mock<ILogger<T>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor)
     {
-        appSettings = new MapperConfigurations() {  ProcessorType = It.IsAny<ProcessorType>() };
+        appSettings = new MapperConfiguration() {  ProcessorType = It.IsAny<ProcessorType>() };
         mockServiceBusClient = new Mock<ServiceBusClient>();
         mockServiceBusSender = new Mock<ServiceBusSender>();
         mockServiceBusProcessor = new Mock<ServiceBusProcessor>();

@@ -1,11 +1,5 @@
-﻿using HtmlAgilityPack;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Ncea.Mapper.Infrastructure.Contracts;
-using Ncea.Mapper.Infrastructure.Models.Requests;
-using Ncea.Mapper.Models;
+﻿using Ncea.Mapper.Infrastructure.Contracts;
 using Ncea.Mapper.Processors.Contracts;
-using System.Text;
 
 namespace Ncea.Mapper.Processors;
 
@@ -14,8 +8,7 @@ public class JnccProcessor : IProcessor
     private readonly IServiceBusService _serviceBusService;
     private readonly ILogger<JnccProcessor> _logger;
 
-    public JnccProcessor(IServiceBusService serviceBusService, 
-                        ILogger<JnccProcessor> logger)
+    public JnccProcessor(IServiceBusService serviceBusService, ILogger<JnccProcessor> logger)
     {
         _serviceBusService = serviceBusService;
         _logger = logger;

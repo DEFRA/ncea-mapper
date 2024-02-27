@@ -19,5 +19,8 @@ RUN dotnet publish "./ncea-mapper.csproj" -c "$BUILD_CONFIGURATION" -o /app/publ
 
 FROM base AS final
 WORKDIR /app
+
+EXPOSE 5000
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ncea-mapper.dll"]

@@ -15,7 +15,7 @@ public class ServiceBusServiceTests
     public async Task SendMessage_ShouldSendMessageToQueue()
     {
         // Arrange
-        ServiceBusServiceForTests.Get(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<ServiceBusService>> loggerMock,
@@ -35,7 +35,7 @@ public class ServiceBusServiceTests
     public async Task CreateProcessor_ShouldCall_CreateProcessor_On_ServiceBusClient()
     {
         // Arrange
-        ServiceBusServiceForTests.Get(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<ServiceBusService>> loggerMock,
@@ -58,7 +58,7 @@ public class ServiceBusServiceTests
     public async Task ErrorHandlerAsync_Should_Complete_Task()
     {
         // Arrange
-        ServiceBusServiceForTests.Get(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<ServiceBusService>> loggerMock,
@@ -89,7 +89,7 @@ public class ServiceBusServiceTests
     public async Task ProcessMessagesAsync_Should_CompleteMessageAsync()
     {
         // Arrange
-        ServiceBusServiceForTests.Get(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<ServiceBusService>> loggerMock,
@@ -119,7 +119,7 @@ public class ServiceBusServiceTests
     public async Task ProcessMessagesAsync_WithError_Should_AbandonMessageAsync()
     {
         // Arrange
-        ServiceBusServiceForTests.Get(out MapperConfigurations appSettings,
+        ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
                                     out Mock<ILogger<ServiceBusService>> loggerMock,

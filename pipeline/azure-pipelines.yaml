@@ -16,7 +16,7 @@ variables:
 
 stages:
 - stage: 'Build'
-  displayName: 'Build Harvester Service'
+  displayName: 'Build Mapper Service'
   jobs: 
   - job: 'Build'
     displayName: 'Build job'

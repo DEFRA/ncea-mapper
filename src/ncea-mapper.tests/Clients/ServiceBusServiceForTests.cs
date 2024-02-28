@@ -1,12 +1,9 @@
 ﻿using Moq;
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.Options;
-using Ncea.Mapper.Infrastructure;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Infrastructure.Contracts;
 using Ncea.Mapper.Constants;
 using Microsoft.Extensions.Logging;
-using Ncea.Mapper.Processors;
 
 namespace Ncea.Mapper.Tests.Clients;
 

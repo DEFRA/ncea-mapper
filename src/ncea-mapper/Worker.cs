@@ -1,7 +1,7 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
+using ncea.mapper.Processor.Contracts;
 using Ncea.Mapper.Models;
-using Ncea.Mapper.Processors.Contracts;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Ncea.Mapper;
@@ -12,27 +12,28 @@ public class Worker : BackgroundService
     private readonly ILogger _logger;
     private readonly TelemetryClient _telemetryClient;
     private readonly MapperConfiguration _mapperConfiguration;
-    private readonly IProcessor _processor;
+    private readonly IOrchestrationService _orchetrator;
 
-    public Worker(ILogger<Worker> logger, MapperConfiguration mapperConfiguration, IProcessor processor, TelemetryClient telemetryClient)
+    public Worker(ILogger<Worker> logger, MapperConfiguration mapperConfiguration, IOrchestrationService orchetrator, TelemetryClient telemetryClient)
     {
         _logger = logger;
         _mapperConfiguration = mapperConfiguration;
-        _processor = processor;
+        _orchetrator = orchetrator;
         _telemetryClient = telemetryClient;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await _orchetrator.StartProcessingAsync();
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("Ncea Mapping service started at: {time}", DateTimeOffset.Now);
 
             using (_telemetryClient.StartOperation<RequestTelemetry>("operation"))
             {
-                _logger.LogInformation("Metadata mapper service started for {source}", _mapperConfiguration.ProcessorType);
-                await _processor.Process(stoppingToken);
-                _logger.LogInformation("Metadata Mapper completed");
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+
                 _telemetryClient.TrackEvent("Harvesting completed");
             }
         }

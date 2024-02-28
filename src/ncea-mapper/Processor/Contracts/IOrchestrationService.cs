@@ -1,10 +1,7 @@
-﻿using Azure.Messaging.ServiceBus;
+﻿namespace ncea.mapper.Processor.Contracts;
 
-namespace Ncea.Mapper.Infrastructure.Contracts;
-
-public interface IServiceBusService
+public interface IOrchestrationService
 {
-    ServiceBusProcessor CreateProcessor(Func<string, Task> messageHandler);
     Task StartProcessingAsync(CancellationToken cancellationToken = default);
     Task StopProcessingAsync(CancellationToken cancellationToken = default);
     Task SendMessageAsync(string message, CancellationToken cancellationToken = default);

@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "ncea-mapper.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "ncea-mapper.fullname" . }}:{{ 5000 }}']
   restartPolicy: Never

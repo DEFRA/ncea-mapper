@@ -4,22 +4,50 @@ using Ncea.Mapper.Models;
 using Ncea.Mapper.Constants;
 using Microsoft.Extensions.Logging;
 using ncea.mapper.Processor.Contracts;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Azure;
 
 namespace Ncea.Mapper.Tests.Clients;
 
 public static class ServiceBusServiceForTests
 {
-    public static void Get<T>(out MapperConfiguration appSettings,
-                            out Mock<ServiceBusClient> mockServiceBusClient,
+    public static void Get<T>(out Mock<IConfiguration> mockConfiguration,
+        out Mock<IAzureClientFactory<ServiceBusSender>> mockAzureServiceBusSenderFactory,
+        out Mock<IAzureClientFactory<ServiceBusProcessor>> mockAzureServiceBusProcessorFactory,
                             out Mock<IOrchestrationService> mockOrchestrationService,
-                            out Mock<ILogger<T>> loggerMock,
-                            out Mock<ServiceBusSender> mockServiceBusSender,
-                            out Mock<ServiceBusProcessor> mockServiceBusProcessor)
+                            out Mock<ILogger<T>> loggerMock)
     {
-        appSettings = new MapperConfiguration() {  ProcessorType = It.IsAny<ProcessorType>() };
-        mockServiceBusClient = new Mock<ServiceBusClient>();
-        mockServiceBusSender = new Mock<ServiceBusSender>();
-        mockServiceBusProcessor = new Mock<ServiceBusProcessor>();
+
+        mockConfiguration = new Mock<IConfiguration>();
+        mockConfiguration.Setup(c => c.GetSection(It.IsAny<String>())).Returns(new Mock<IConfigurationSection>().Object);
+        mockConfiguration.SetupGet(x => x[It.IsAny<string>()]).Returns("the string you want to return");
+
+        mockAzureServiceBusSenderFactory = new Mock<IAzureClientFactory<ServiceBusSender>>();
+        mockAzureServiceBusSenderFactory.Setup(x => x.CreateClient(It.IsAny<string>()))
+            .Returns<ServiceBusSender>(res =>
+            {
+                var mockAzureSend = new Mock<ServiceBusSender>();
+                mockAzureSend
+                    .Setup(y => y.SendMessageAsync(It.IsAny<ServiceBusMessage>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(default(object)));
+
+                return mockAzureSend.Object;
+            }
+            );
+
+        mockAzureServiceBusProcessorFactory = new Mock<IAzureClientFactory<ServiceBusProcessor>>();
+        mockAzureServiceBusProcessorFactory.Setup(x => x.CreateClient(It.IsAny<string>()))
+            .Returns<ServiceBusProcessor>(res =>
+            {
+                var mockAzureSend = new Mock<ServiceBusProcessor>();
+                mockAzureSend
+                    .Setup(y => y.StartProcessingAsync(It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(default(object)));
+
+                return mockAzureSend.Object;
+            }
+            );
+
         loggerMock = new Mock<ILogger<T>>(MockBehavior.Strict);
         loggerMock.Setup(x => x.Log(
                 LogLevel.Information,
@@ -38,11 +66,6 @@ public static class ServiceBusServiceForTests
             )
         );
         mockOrchestrationService = new Mock<IOrchestrationService>();
-
-        // Set up the mock to return the mock sender
-        mockServiceBusProcessor.Setup(x => x.StartProcessingAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-        mockServiceBusClient.Setup(x => x.CreateSender(It.IsAny<string>())).Returns(mockServiceBusSender.Object);
-        mockServiceBusClient.Setup(x => x.CreateProcessor(It.IsAny<string>(), It.IsAny<ServiceBusProcessorOptions>())).Returns(mockServiceBusProcessor.Object);
-        mockOrchestrationService.Setup(x => x.StartProcessingAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        mockOrchestrationService.Setup(x => x.StartProcessorAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
     }
 }

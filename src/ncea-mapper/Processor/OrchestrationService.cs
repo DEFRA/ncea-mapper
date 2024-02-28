@@ -28,19 +28,14 @@ public class OrchestrationService : IOrchestrationService
         _logger = logger;
     }
 
-    public async Task StartProcessingAsync(CancellationToken cancellationToken = default)
+    public async Task StartProcessorAsync(CancellationToken cancellationToken = default)
     {
         _processor.ProcessMessageAsync += ProcessMessagesAsync;
         _processor.ProcessErrorAsync += ErrorHandlerAsync;
         await _processor.StartProcessingAsync(cancellationToken);
     }
 
-    public async Task StopProcessingAsync(CancellationToken cancellationToken = default)
-    {
-        await _processor.StopProcessingAsync(cancellationToken);
-    }
-
-    public async Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
+    private async Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
     {
         var messageInBytes = Encoding.UTF8.GetBytes(message);
         var serviceBusMessage = new ServiceBusMessage(messageInBytes);
@@ -54,6 +49,7 @@ public class OrchestrationService : IOrchestrationService
             var body = args.Message.Body.ToString();
             var dataSource = args.Message.ApplicationProperties["DataSource"].ToString();
             var mdcMappedData = await _serviceProvider.GetRequiredKeyedService<IMapperService>(dataSource).Transform(body);
+            
             await SendMessageAsync(mdcMappedData);
 
             await args.CompleteMessageAsync(args.Message);

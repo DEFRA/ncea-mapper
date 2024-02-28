@@ -69,16 +69,8 @@ static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, Hos
     if (createQueue)
     {
         var servicebusAdminClient = new ServiceBusAdministrationClient(servicebusHostName, new DefaultAzureCredential());
-        bool harvesterQueueExists = await servicebusAdminClient.QueueExistsAsync(harvesterQueueName);
-        if (!harvesterQueueExists)
-        {
-            await servicebusAdminClient.CreateQueueAsync(harvesterQueueName);
-        }
-        bool mapperQueueExists = await servicebusAdminClient.QueueExistsAsync(mapperQueueName);
-        if (!mapperQueueExists)
-        {
-            await servicebusAdminClient.CreateQueueAsync(mapperQueueName);
-        }
+        await CreateServiceBusQueueIfNotExist(servicebusAdminClient, harvesterQueueName!);
+        await CreateServiceBusQueueIfNotExist(servicebusAdminClient, mapperQueueName!);        
     }
 
     builder.Services.AddAzureClients(builder =>
@@ -133,9 +125,8 @@ static void ConfigureServices(HostApplicationBuilder builder)
     builder.Services.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
 }
 
-static async Task CreateServiceBusQueueIfNotExist(string? servicebusHostName, string queueName)
-{
-    var servicebusAdminClient = new ServiceBusAdministrationClient(servicebusHostName, new DefaultAzureCredential());
+static async Task CreateServiceBusQueueIfNotExist(ServiceBusAdministrationClient servicebusAdminClient, string queueName)
+{    
     bool queueExists = await servicebusAdminClient.QueueExistsAsync(queueName);
     if (!queueExists)
     {

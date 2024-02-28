@@ -1,20 +1,20 @@
 replicaCount: 1
 
 image:
-  repository: 
+  repository: nceapocsbox.azurecr.io/defra/ncea-mapper-service
   pullPolicy: IfNotPresent
-  tag: 
+  tag: ""
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  name: 
+  name: serviceaccount-nceamapper-sbox
 
 env:
-  serviceBusHostName: 
-  keyVaultUri: 
+  serviceBusHostName: nceapocsbox.servicebus.windows.net
+  keyVaultUri: https://nceapocsbox.vault.azure.net/
 
 podAnnotations: {}
 podLabels: 

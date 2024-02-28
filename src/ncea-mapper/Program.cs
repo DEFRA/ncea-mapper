@@ -14,6 +14,7 @@ using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.Extensions.Azure;
 using ncea.mapper.Processor;
 using ncea.mapper.Processor.Contracts;
+using Ncea.Mapper.Processors;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -52,7 +53,7 @@ static void ConfigureProcessor(HostApplicationBuilder builder, IList<MapperConfi
 
     if (type != null)
     {
-        builder.Services.AddSingleton(typeof(IProcessor), type);
+        builder.Services.AddSingleton(typeof(IMapperService), type);
         builder.Services.AddSingleton(typeof(MapperConfiguration), mapperConfiguration);
     }
 }
@@ -85,18 +86,12 @@ static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, Hos
         builder.AddServiceBusClientWithNamespace(servicebusHostName);
         builder.UseCredential(new DefaultAzureCredential());
 
-        builder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
-                provider
-                    .GetService<ServiceBusClient>()
-                    .CreateSender(harvesterQueueName)
-            )
+        builder.AddClient<ServiceBusSender, ServiceBusClientOptions>(
+            (_, _, provider) => provider.GetService<ServiceBusClient>()!.CreateSender(harvesterQueueName))
             .WithName(harvesterQueueName);
 
-        builder.AddClient<ServiceBusProcessor, ServiceBusClientOptions>((_, _, provider) =>
-                provider
-                    .GetService<ServiceBusClient>()
-                    .CreateProcessor(mapperQueueName)
-            )
+        builder.AddClient<ServiceBusProcessor, ServiceBusClientOptions>(
+            (_, _, provider) => provider.GetService<ServiceBusClient>()!.CreateProcessor(mapperQueueName))
             .WithName(mapperQueueName);
     });
 }
@@ -132,8 +127,10 @@ static void ConfigureLogging(HostApplicationBuilder builder)
 static void ConfigureServices(HostApplicationBuilder builder)
 {
     builder.Services.AddSingleton<IApiClient, ApiClient>();
-    builder.Services.AddSingleton<IOrchestrationService, ProcessOrchestrationService>();
+    builder.Services.AddSingleton<IOrchestrationService, OrchestrationService>();
     builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
+    builder.Services.AddKeyedSingleton<IMapperService, JnccMapper>("Jncc");
+    builder.Services.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
 }
 
 static async Task CreateServiceBusQueueIfNotExist(string? servicebusHostName, string queueName)

@@ -17,7 +17,7 @@ public class ServiceBusServiceTests
         ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
-                                    out Mock<ILogger<ProcessOrchestrationService>> loggerMock,
+                                    out Mock<ILogger<OrchestrationService>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
@@ -37,7 +37,7 @@ public class ServiceBusServiceTests
         ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
-                                    out Mock<ILogger<ProcessOrchestrationService>> loggerMock,
+                                    out Mock<ILogger<OrchestrationService>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
 
@@ -60,14 +60,14 @@ public class ServiceBusServiceTests
         ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
-                                    out Mock<ILogger<ProcessOrchestrationService>> loggerMock,
+                                    out Mock<ILogger<OrchestrationService>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
         var args = new ProcessErrorEventArgs(new Exception("test-exception"), It.IsAny<ServiceBusErrorSource>(),
                                              It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                                              It.IsAny<CancellationToken>());
-        var errorHandlerMethod = typeof(ProcessOrchestrationService).GetMethod("ErrorHandlerAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+        var errorHandlerMethod = typeof(OrchestrationService).GetMethod("ErrorHandlerAsync", BindingFlags.NonPublic | BindingFlags.Instance);
         var task = (Task?)errorHandlerMethod?.Invoke(service, new object[] { args });
 
 
@@ -91,7 +91,7 @@ public class ServiceBusServiceTests
         ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
-                                    out Mock<ILogger<ProcessOrchestrationService>> loggerMock,
+                                    out Mock<ILogger<OrchestrationService>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         
@@ -106,7 +106,7 @@ public class ServiceBusServiceTests
         var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
         service.CreateProcessor((string message) => { return Task.CompletedTask; });
 
-        var processMessagesAsyncMethod = typeof(ProcessOrchestrationService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
         if(task != null) await task;
 
@@ -121,7 +121,7 @@ public class ServiceBusServiceTests
         ServiceBusServiceForTests.Get(out MapperConfiguration appSettings,
                                     out Mock<ServiceBusClient> mockServiceBusClient,
                                     out Mock<IServiceBusService> mockServiceBusService,
-                                    out Mock<ILogger<ProcessOrchestrationService>> loggerMock,
+                                    out Mock<ILogger<OrchestrationService>> loggerMock,
                                     out Mock<ServiceBusSender> mockServiceBusSender,
                                     out Mock<ServiceBusProcessor> mockServiceBusProcessor);
 
@@ -135,7 +135,7 @@ public class ServiceBusServiceTests
         // Act
         var service = new ServiceBusService(appSettings, mockServiceBusClient.Object, loggerMock.Object);
         service.CreateProcessor((string message) => { return Task.CompletedTask; });
-        var processMessagesAsyncMethod = typeof(ProcessOrchestrationService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
         if(task != null) await task;
 

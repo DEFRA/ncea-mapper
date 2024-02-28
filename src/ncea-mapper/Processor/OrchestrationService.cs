@@ -2,25 +2,29 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
 using ncea.mapper.Processor.Contracts;
+using Ncea.Mapper.Processors.Contracts;
 
 namespace ncea.mapper.Processor;
 
-public class ProcessOrchestrationService : IOrchestrationService
+public class OrchestrationService : IOrchestrationService
 {
     private readonly ServiceBusSender _sender;
     private readonly ServiceBusProcessor _processor;
-    private readonly ILogger<ProcessOrchestrationService> _logger;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<OrchestrationService> _logger;
 
-    public ProcessOrchestrationService(IConfiguration configuration,
+    public OrchestrationService(IConfiguration configuration,
         IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory,
         IAzureClientFactory<ServiceBusProcessor> serviceBusProcessorFactory,
-                             ILogger<ProcessOrchestrationService> logger)
+        IServiceProvider serviceProvider,
+        ILogger<OrchestrationService> logger)
     {
         var harvesterQueueName = configuration.GetValue<string>("HarvesterQueueName");
         var mapperQueueName = configuration.GetValue<string>("MapperQueueName");
 
         _processor = serviceBusProcessorFactory.CreateClient(harvesterQueueName);
         _sender = serviceBusSenderFactory.CreateClient(mapperQueueName);
+        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
@@ -49,6 +53,8 @@ public class ProcessOrchestrationService : IOrchestrationService
         {
             var body = args.Message.Body.ToString();
             var dataSource = args.Message.ApplicationProperties["DataSource"].ToString();
+            var mdcMappedData = await _serviceProvider.GetRequiredKeyedService<IMapperService>(dataSource).Transform(body);
+            await SendMessageAsync(mdcMappedData);
 
             await args.CompleteMessageAsync(args.Message);
         }

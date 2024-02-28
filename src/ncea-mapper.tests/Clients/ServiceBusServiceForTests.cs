@@ -6,6 +6,10 @@ using Microsoft.Extensions.Logging;
 using ncea.mapper.Processor.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using Ncea.Mapper.Processors.Contracts;
+using Ncea.Mapper.Processors;
 
 namespace Ncea.Mapper.Tests.Clients;
 
@@ -14,8 +18,9 @@ public static class ServiceBusServiceForTests
     public static void Get<T>(out Mock<IConfiguration> mockConfiguration,
         out Mock<IAzureClientFactory<ServiceBusSender>> mockAzureServiceBusSenderFactory,
         out Mock<IAzureClientFactory<ServiceBusProcessor>> mockAzureServiceBusProcessorFactory,
-                            out Mock<IOrchestrationService> mockOrchestrationService,
-                            out Mock<ILogger<T>> loggerMock)
+        out IServiceProvider serviceProvider,
+        out Mock<IOrchestrationService> mockOrchestrationService,
+        out Mock<ILogger<T>> loggerMock)
     {
 
         mockConfiguration = new Mock<IConfiguration>();
@@ -46,7 +51,12 @@ public static class ServiceBusServiceForTests
 
                 return mockAzureSend.Object;
             }
-            );
+            );      
+
+        var services = new ServiceCollection();
+        services.AddKeyedSingleton<IMapperService, JnccMapper>("Jncc");
+        services.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
+        serviceProvider = services.BuildServiceProvider();
 
         loggerMock = new Mock<ILogger<T>>(MockBehavior.Strict);
         loggerMock.Setup(x => x.Log(

@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: nceapocsbox.azurecr.io/defra/ncea-harvester-service
+  repository: nceapocsbox.azurecr.io/defra/ncea-mapper-service
   pullPolicy: IfNotPresent
   tag: ""
 

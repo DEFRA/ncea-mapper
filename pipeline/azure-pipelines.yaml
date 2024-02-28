@@ -49,7 +49,7 @@ stages:
             - template: steps-deploy-helm-charts.yaml
               parameters:
                 envName: sandbox
-                releaseName: ncea-harvester-sandbox
+                releaseName: ncea-mapper-sandbox
                 aksServiceConnection: aksServiceConn-AZR-NCE-SND1
 
 - stage: 'dev'
@@ -70,7 +70,7 @@ stages:
             - template: steps-deploy-helm-charts.yaml
               parameters:
                 envName: dev
-                releaseName: ncea-harvester-dev
+                releaseName: ncea-mapper-dev
                 aksServiceConnection: aksServiceConn-AZR-NCE-SND1
 
 - stage: 'test'
@@ -91,5 +91,5 @@ stages:
             - template: steps-deploy-helm-charts.yaml
               parameters:
                 envName: dev
-                releaseName: ncea-harvester-test
+                releaseName: ncea-mapper-test
                 aksServiceConnection: aksServiceConn-AZR-NCE-SND1

@@ -32,14 +32,13 @@ steps:
     namespace: $(aksNamespace)
     command: 'upgrade'
     chartType: 'FilePath'
-    chartPath: '$(Pipeline.Workspace)/ncea-harvester-$(Build.BuildNumber).tgz'
-    valueFile: $(Pipeline.Workspace)/chart/ncea-harvester/values/values.${{ parameters.envName }}.yaml
+    chartPath: '$(Pipeline.Workspace)/ncea-mapper-$(Build.BuildNumber).tgz'
+    valueFile: $(Pipeline.Workspace)/chart/ncea-mapper/values/values.${{ parameters.envName }}.yaml
     overrideValues: |
         image.repository=$(containerRepositoryFullPath)
         image.tag=$(imageTag)
-        serviceAccount.name=$(serviceAccountHarvester)
+        serviceAccount.name=$(serviceAccountMapper)
         env.serviceBusHostName=$(serviceBusHostName)
         env.keyVaultUri=$(keyVaultUri)
-        env.blobStorageUri=$(blobStorageUri)
     install: true
     force: true

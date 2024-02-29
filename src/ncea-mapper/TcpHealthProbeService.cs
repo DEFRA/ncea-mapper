@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Net.Sockets;
 using System.Net;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ncea.Mapper;
 
+[ExcludeFromCodeCoverage]
 public sealed class TcpHealthProbeService : BackgroundService
 {
     private readonly HealthCheckService _healthCheckService;

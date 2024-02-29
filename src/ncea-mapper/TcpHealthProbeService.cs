@@ -40,12 +40,12 @@ public sealed class TcpHealthProbeService : BackgroundService
         _listener.Stop();
     }
 
-    private async Task UpdateHeartbeatAsync(CancellationToken token)
+    private async Task UpdateHeartbeatAsync(CancellationToken cancellationToken)
     {
         try
         {
             // Get health check results
-            var result = await _healthCheckService.CheckHealthAsync(token);
+            var result = await _healthCheckService.CheckHealthAsync(cancellationToken);
             var isHealthy = result.Status == HealthStatus.Healthy;
 
             if (!isHealthy)
@@ -58,18 +58,16 @@ public sealed class TcpHealthProbeService : BackgroundService
             _listener.Start();
             while (_listener.Server.IsBound && _listener.Pending())
             {
-                var client = await _listener.AcceptTcpClientAsync();
+                var client = await _listener.AcceptTcpClientAsync(cancellationToken);
                 client.Close();
                 _logger.LogInformation("Successfully processed health check request.");
             }
 
             _logger.LogDebug("Heartbeat check executed.");
         }
-#pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception ex)
         {
             _logger.LogCritical(ex, "An error occurred while checking heartbeat.");
         }
-#pragma warning restore CA1031 // Do not catch general exception types
     }
 }

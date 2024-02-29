@@ -21,7 +21,7 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _orchetrator.StartProcessorAsync();
+        await _orchetrator.StartProcessorAsync(stoppingToken);
 
         while (!stoppingToken.IsCancellationRequested)
         {

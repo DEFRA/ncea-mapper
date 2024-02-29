@@ -7,7 +7,7 @@ using ncea.mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Ncea.Mapper.Tests.Clients;
 
-//namespace Ncea.Mapper.Tests.Processors;
+namespace Ncea.Mapper.Tests.Processors;
 
 public class JnccMapperTests
 {

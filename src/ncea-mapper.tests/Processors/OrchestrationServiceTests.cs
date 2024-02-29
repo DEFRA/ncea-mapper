@@ -10,7 +10,7 @@ using Ncea.Mapper.Tests.Clients;
 using ncea_mapper.tests.Clients;
 using System.Reflection;
 
-namespace ncea_mapper.tests.Processors;
+namespace Ncea.Mapper.Tests.Processors;
 
 public class OrchestrationServiceTests
 {
@@ -173,7 +173,7 @@ public class OrchestrationServiceTests
         // Act
         var service = new OrchestrationService(configuration, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("SendMessageAsync", BindingFlags.NonPublic | BindingFlags.Instance);
-        var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { "test-message", It.IsAny<CancellationToken>() }));
+        var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { "test-message", It.IsAny<string>(), It.IsAny<CancellationToken>() }));
         if (task != null) await task;
 
         // Assert

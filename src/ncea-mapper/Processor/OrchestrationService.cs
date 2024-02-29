@@ -35,10 +35,11 @@ public class OrchestrationService : IOrchestrationService
         await _processor.StartProcessingAsync(cancellationToken);
     }
 
-    private async Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
+    private async Task SendMessageAsync(string message, string dataSource, CancellationToken cancellationToken = default)
     {
         var messageInBytes = Encoding.UTF8.GetBytes(message);
         var serviceBusMessage = new ServiceBusMessage(messageInBytes);
+        serviceBusMessage.ApplicationProperties.Add("DataSource", dataSource);
         await _sender.SendMessageAsync(serviceBusMessage, cancellationToken);
     }
 
@@ -50,7 +51,7 @@ public class OrchestrationService : IOrchestrationService
             var dataSource = args.Message.ApplicationProperties["DataSource"].ToString();
             var mdcMappedData = await _serviceProvider.GetRequiredKeyedService<IMapperService>(dataSource).Transform(body);
             
-            await SendMessageAsync(mdcMappedData);
+            await SendMessageAsync(mdcMappedData, dataSource!);
 
             await args.CompleteMessageAsync(args.Message);
         }

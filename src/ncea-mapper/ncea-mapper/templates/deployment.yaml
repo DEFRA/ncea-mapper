@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "ncea-mapper.fullname" . }}
   labels:
+    azure.workload.identity/use: "true"  
     {{- include "ncea-mapper.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}

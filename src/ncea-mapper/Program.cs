@@ -57,12 +57,12 @@ static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, Hos
         builder.UseCredential(new DefaultAzureCredential());
 
         builder.AddClient<ServiceBusSender, ServiceBusClientOptions>(
-            (_, _, provider) => provider.GetService<ServiceBusClient>()!.CreateSender(harvesterQueueName))
-            .WithName(harvesterQueueName);
+            (_, _, provider) => provider.GetService<ServiceBusClient>()!.CreateSender(mapperQueueName))
+            .WithName(mapperQueueName);
 
         builder.AddClient<ServiceBusProcessor, ServiceBusClientOptions>(
-            (_, _, provider) => provider.GetService<ServiceBusClient>()!.CreateProcessor(mapperQueueName))
-            .WithName(mapperQueueName);
+            (_, _, provider) => provider.GetService<ServiceBusClient>()!.CreateProcessor(harvesterQueueName))
+            .WithName(harvesterQueueName);
     });
 }
 

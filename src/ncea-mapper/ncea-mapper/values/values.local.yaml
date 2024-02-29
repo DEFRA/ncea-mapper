@@ -3,14 +3,14 @@ replicaCount: 1
 image:
   repository: nceapocsbox.azurecr.io/defra/ncea-mapper-service
   pullPolicy: IfNotPresent
-  tag: ""
+  tag: 20240229.16_feature-314989-create-heml-chart
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  name: serviceaccount-nceamapper-sbox
+  name: serviceaccount-nceaharvester-sbox
 
 env:
   serviceBusHostName: nceapocsbox.servicebus.windows.net

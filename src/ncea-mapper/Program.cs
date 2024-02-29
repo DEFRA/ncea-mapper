@@ -13,6 +13,8 @@ using Microsoft.Extensions.Azure;
 using ncea.mapper.Processor;
 using ncea.mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Microsoft.Extensions.Configuration;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -69,8 +71,9 @@ static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, Hos
 static void ConfigureKeyVault(IConfigurationRoot configuration, HostApplicationBuilder builder)
 {
     var keyVaultEndpoint = new Uri(configuration.GetValue<string>("KeyVaultUri")!);
-    builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
-    builder.Services.AddSingleton(x => new SecretClient(keyVaultEndpoint, new DefaultAzureCredential()));
+    var secretClient = new SecretClient(keyVaultEndpoint, new DefaultAzureCredential());
+    builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+    builder.Services.AddSingleton(secretClient);
 }
 
 static void ConfigureLogging(HostApplicationBuilder builder)

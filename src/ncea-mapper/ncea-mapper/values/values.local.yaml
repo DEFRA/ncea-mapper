@@ -10,7 +10,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  name: serviceaccount-nceaharvester-sbox
+  name: serviceaccount-nceamapper-sbox
 
 env:
   serviceBusHostName: nceapocsbox.servicebus.windows.net

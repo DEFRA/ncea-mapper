@@ -2,11 +2,6 @@
 using Moq;
 using Ncea.Mapper.Processors.Contracts;
 using Ncea.Mapper.Processors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ncea_mapper.tests.Clients
 {

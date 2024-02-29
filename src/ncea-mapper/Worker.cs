@@ -1,7 +1,6 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using ncea.mapper.Processor.Contracts;
-using Ncea.Mapper.Models;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Ncea.Mapper;
@@ -11,15 +10,13 @@ public class Worker : BackgroundService
 {
     private readonly ILogger _logger;
     private readonly TelemetryClient _telemetryClient;
-    private readonly MapperConfiguration _mapperConfiguration;
     private readonly IOrchestrationService _orchetrator;
 
-    public Worker(ILogger<Worker> logger, MapperConfiguration mapperConfiguration, IOrchestrationService orchetrator, TelemetryClient telemetryClient)
+    public Worker(IOrchestrationService orchetrator, TelemetryClient telemetryClient, ILogger<Worker> logger)
     {
-        _logger = logger;
-        _mapperConfiguration = mapperConfiguration;
         _orchetrator = orchetrator;
         _telemetryClient = telemetryClient;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

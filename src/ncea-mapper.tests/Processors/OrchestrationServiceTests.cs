@@ -1,17 +1,13 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using ncea.mapper.Processor;
 using ncea.mapper.Processor.Contracts;
-using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors;
-using Ncea.Mapper.Processors.Contracts;
 using Ncea.Mapper.Tests.Clients;
 using ncea_mapper.tests.Clients;
-using System.Data.Common;
 using System.Reflection;
 
 namespace ncea_mapper.tests.Processors;

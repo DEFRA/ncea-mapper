@@ -3,9 +3,7 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ncea.mapper.Processor;
 using ncea.mapper.Processor.Contracts;
-using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors;
 using Ncea.Mapper.Tests.Clients;
 

@@ -3,11 +3,9 @@ using Ncea.Mapper;
 using Ncea.Mapper.Infrastructure;
 using Azure.Messaging.ServiceBus;
 using Ncea.Mapper.Infrastructure.Contracts;
-using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Messaging.ServiceBus.Administration;
-using Ncea.Mapper.Constants;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
@@ -22,43 +20,22 @@ var configuration = new ConfigurationBuilder()
                                 .AddEnvironmentVariables()
                                 .Build();
 
-
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddHealthChecks().AddCheck<CustomHealthCheck>("custom_hc");
 builder.Services.AddHostedService<TcpHealthProbeService>();
 
-builder.Services.Configure<MapperConfiguration>(configuration.GetSection("MapperConfigurations"));
 builder.Services.AddHttpClient();
-
-var dataSource = configuration.GetValue<string>("DataSource");
-var dataSourceName = Enum.Parse(typeof(ProcessorType), dataSource!).ToString()!.ToLowerInvariant();
-var processorType = (ProcessorType)Enum.Parse(typeof(ProcessorType), dataSource!);
-var mapperConfigurations = configuration.GetSection("MapperConfigurations").Get<List<MapperConfiguration>>()!;
 
 ConfigureKeyVault(configuration, builder);
 ConfigureLogging(builder);
-await ConfigureServiceBusQueue(configuration, builder, dataSourceName);
+await ConfigureServiceBusQueue(configuration, builder);
 ConfigureServices(builder);
-ConfigureProcessor(builder, mapperConfigurations, processorType);
 
 var host = builder.Build();
 host.Run();
 
-static void ConfigureProcessor(HostApplicationBuilder builder, IList<MapperConfiguration> mapperConfigurations, ProcessorType processorType)
-{
-    var mapperConfiguration = mapperConfigurations.Single(x => x.ProcessorType == processorType);
-    var assembly = typeof(Program).Assembly;
-    var type = assembly.GetType(mapperConfiguration.Type);
-
-    if (type != null)
-    {
-        builder.Services.AddSingleton(typeof(IMapperService), type);
-        builder.Services.AddSingleton(typeof(MapperConfiguration), mapperConfiguration);
-    }
-}
-
-static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, HostApplicationBuilder builder, string dataSourceName)
+static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, HostApplicationBuilder builder)
 {
     var harvesterQueueName = configuration.GetValue<string>("HarvesterQueueName");
     var mapperQueueName = configuration.GetValue<string>("MapperQueueName");

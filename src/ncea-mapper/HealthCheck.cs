@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Ncea.Mapper;
 
 [ExcludeFromCodeCoverage]
-public class CustomHealthCheck : IHealthCheck
+public class HealthCheck : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
         CancellationToken cancellationToken = new CancellationToken())

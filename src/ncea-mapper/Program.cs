@@ -22,7 +22,8 @@ var configuration = new ConfigurationBuilder()
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
-builder.Services.AddHealthChecks().AddCheck<CustomHealthCheck>("custom_hc");
+
+builder.Services.AddHealthChecks().AddCheck<HealthCheck>("custom_hc");
 builder.Services.AddHostedService<TcpHealthProbeService>();
 
 builder.Services.AddHttpClient();

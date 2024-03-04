@@ -16,8 +16,7 @@ env:
   serviceBusHostName: nceapocsbox.servicebus.windows.net
   keyVaultUri: https://nceapocsbox.vault.azure.net/
 
-podAnnotations: 
-  rollme: "randAlphaNum 5"
+podAnnotations: {}
 
 podLabels: 
   azure.workload.identity/use: "true"

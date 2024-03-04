@@ -16,8 +16,7 @@ env:
   serviceBusHostName: 
   keyVaultUri: 
 
-podAnnotations: 
-  rollme: "randAlphaNum 5"
+podAnnotations: {}
 
 podLabels: 
   azure.workload.identity/use: "true"

@@ -12,7 +12,7 @@ public class MedinMapper : IMapperService
     }
     public async Task<string> Transform(string harvestedData, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"Medin transformer");
+        _logger.LogInformation("Medin transformer");
         return await Task.FromResult(harvestedData);
     }
 }

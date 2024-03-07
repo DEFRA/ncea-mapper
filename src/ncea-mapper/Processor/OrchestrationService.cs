@@ -8,6 +8,7 @@ namespace ncea.mapper.Processor;
 
 public class OrchestrationService : IOrchestrationService
 {
+    private const string ProcessorErrorMessage = "Error in processing message in ncea-mapper service";
     private readonly ServiceBusSender _sender;
     private readonly ServiceBusProcessor _processor;
     private readonly IServiceProvider _serviceProvider;
@@ -57,14 +58,14 @@ public class OrchestrationService : IOrchestrationService
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error processing message: {ex.Message}", ex.Message);
+            _logger.LogError(ex, ProcessorErrorMessage);
             await args.AbandonMessageAsync(args.Message);
         }
     }
 
     private Task ErrorHandlerAsync(ProcessErrorEventArgs args)
     {
-        _logger.LogError("Error processing message: {args.Exception.Message}", args.Exception.Message);
+        _logger.LogError(args.Exception, ProcessorErrorMessage);
         return Task.CompletedTask;
     }
 }

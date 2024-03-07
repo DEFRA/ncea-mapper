@@ -12,7 +12,7 @@ public class JnccMapper : IMapperService
     }
     public async Task<string> Transform(string harvestedData, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"Jncc transformer");
+        _logger.LogInformation("Jncc transformer");
         return await Task.FromResult(harvestedData);
     }
 }

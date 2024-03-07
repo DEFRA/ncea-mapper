@@ -1,17 +1,20 @@
 using Azure.Identity;
-using Azure.Storage.Blobs;
 using Ncea.Mapper;
 using Ncea.Mapper.Infrastructure;
 using Azure.Messaging.ServiceBus;
 using Ncea.Mapper.Infrastructure.Contracts;
-using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Messaging.ServiceBus.Administration;
-using Ncea.Mapper.Constants;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
+using Microsoft.Extensions.Azure;
+using ncea.mapper.Processor;
+using ncea.mapper.Processor.Contracts;
+using Ncea.Mapper.Processors;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Microsoft.Extensions.Configuration;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -21,55 +24,56 @@ var configuration = new ConfigurationBuilder()
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();
-builder.Services.Configure<MapperConfigurations>(configuration.GetSection("MapperConfigurations"));
+
+builder.Services.AddHealthChecks().AddCheck<HealthCheck>("custom_hc");
+builder.Services.AddHostedService<TcpHealthProbeService>();
+
 builder.Services.AddHttpClient();
-
-var dataSource = configuration.GetValue<string>("DataSource");
-var dataSourceName = Enum.Parse(typeof(ProcessorType), dataSource!).ToString()!.ToLowerInvariant();
-var processorType = (ProcessorType)Enum.Parse(typeof(ProcessorType), dataSource!);
-var mapperConfigurations = configuration.GetSection("HarvesterConfigurations").Get<List<MapperConfigurations>>()!;
-
 
 ConfigureKeyVault(configuration, builder);
 ConfigureLogging(builder);
-await ConfigureBlobStorage(configuration, builder, dataSourceName);
-await ConfigureServiceBusQueue(configuration, builder, dataSourceName);
+await ConfigureServiceBusQueue(configuration, builder);
 ConfigureServices(builder);
-ConfigureProcessor(builder, mapperConfigurations, processorType);
 
 var host = builder.Build();
 host.Run();
 
-static void ConfigureProcessor(HostApplicationBuilder builder, IList<MapperConfigurations> mapperConfigurations, ProcessorType processorType)
+static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, HostApplicationBuilder builder)
 {
-    var harvsesterConfiguration = mapperConfigurations.Single(x => x.ProcessorType == processorType);
-    var assembly = typeof(Program).Assembly;
-    var type = assembly.GetType(harvsesterConfiguration.Type);
+    var harvesterQueueName = configuration.GetValue<string>("HarvesterQueueName");
+    var mapperQueueName = configuration.GetValue<string>("MapperQueueName");
 
-    if (type != null)
-    {
-        builder.Services.AddSingleton(typeof(IProcessor), type);
-        builder.Services.AddSingleton(typeof(MapperConfigurations), mapperConfigurations);
-    }
-}
-
-static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, HostApplicationBuilder builder, string dataSourceName)
-{
     var servicebusHostName = configuration.GetValue<string>("ServiceBusHostName");
-    builder.Services.AddSingleton(x => new ServiceBusClient(servicebusHostName, new DefaultAzureCredential()));
 
-    var mapperQueueName = $"{dataSourceName}-mapper-queue";
-    await CreateServiceBusQueueIfNotExist(servicebusHostName, mapperQueueName);
+    var createQueue = configuration.GetValue<bool>("DynamicQueueCreation");
+    if (createQueue)
+    {
+        var servicebusAdminClient = new ServiceBusAdministrationClient(servicebusHostName, new DefaultAzureCredential());
+        await CreateServiceBusQueueIfNotExist(servicebusAdminClient, harvesterQueueName!);
+        await CreateServiceBusQueueIfNotExist(servicebusAdminClient, mapperQueueName!);        
+    }
 
-    var harvesterQueueName = $"{dataSourceName}-harvester-queue";
-    await CreateServiceBusQueueIfNotExist(servicebusHostName, harvesterQueueName);
+    builder.Services.AddAzureClients(builder =>
+    {
+        builder.AddServiceBusClientWithNamespace(servicebusHostName);
+        builder.UseCredential(new DefaultAzureCredential());
+
+        builder.AddClient<ServiceBusSender, ServiceBusClientOptions>(
+            (_, _, provider) => provider.GetService<ServiceBusClient>()!.CreateSender(mapperQueueName))
+            .WithName(mapperQueueName);
+
+        builder.AddClient<ServiceBusProcessor, ServiceBusClientOptions>(
+            (_, _, provider) => provider.GetService<ServiceBusClient>()!.CreateProcessor(harvesterQueueName))
+            .WithName(harvesterQueueName);
+    });
 }
 
 static void ConfigureKeyVault(IConfigurationRoot configuration, HostApplicationBuilder builder)
 {
     var keyVaultEndpoint = new Uri(configuration.GetValue<string>("KeyVaultUri")!);
-    builder.Configuration.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
-    builder.Services.AddSingleton(x => new SecretClient(keyVaultEndpoint, new DefaultAzureCredential()));
+    var secretClient = new SecretClient(keyVaultEndpoint, new DefaultAzureCredential());
+    builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+    builder.Services.AddSingleton(secretClient);
 }
 
 static void ConfigureLogging(HostApplicationBuilder builder)
@@ -93,27 +97,17 @@ static void ConfigureLogging(HostApplicationBuilder builder)
     });
 }
 
-static async Task ConfigureBlobStorage(IConfigurationRoot configuration, HostApplicationBuilder builder, string dataSourceName)
-{
-    var blobStorageEndpoint = new Uri(configuration.GetValue<string>("BlobStorageUri")!);
-    var blobServiceClient = new BlobServiceClient(blobStorageEndpoint, new DefaultAzureCredential());
-
-    builder.Services.AddSingleton(x => blobServiceClient);
-    BlobContainerClient container = blobServiceClient.GetBlobContainerClient(dataSourceName);
-    await container.CreateIfNotExistsAsync();
-}
-
 static void ConfigureServices(HostApplicationBuilder builder)
 {
     builder.Services.AddSingleton<IApiClient, ApiClient>();
-    builder.Services.AddSingleton<IServiceBusService, ServiceBusService>();
+    builder.Services.AddSingleton<IOrchestrationService, OrchestrationService>();
     builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
-    builder.Services.AddSingleton<IBlobService, BlobService>();
+    builder.Services.AddKeyedSingleton<IMapperService, JnccMapper>("Jncc");
+    builder.Services.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
 }
 
-static async Task CreateServiceBusQueueIfNotExist(string? servicebusHostName, string queueName)
-{
-    var servicebusAdminClient = new ServiceBusAdministrationClient(servicebusHostName, new DefaultAzureCredential());
+static async Task CreateServiceBusQueueIfNotExist(ServiceBusAdministrationClient servicebusAdminClient, string queueName)
+{    
     bool queueExists = await servicebusAdminClient.QueueExistsAsync(queueName);
     if (!queueExists)
     {

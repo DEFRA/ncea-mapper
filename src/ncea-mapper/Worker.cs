@@ -1,9 +1,6 @@
-using Cronos;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.Extensions.Options;
-using Ncea.Mapper.Models;
-using Ncea.Mapper.Processors.Contracts;
+using ncea.mapper.Processor.Contracts;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Ncea.Mapper;
@@ -13,29 +10,28 @@ public class Worker : BackgroundService
 {
     private readonly ILogger _logger;
     private readonly TelemetryClient _telemetryClient;
-    private readonly MapperConfigurations _mapperConfigurations;
-    private readonly IProcessor _processor;
+    private readonly IOrchestrationService _orchetrator;
 
-    public Worker(ILogger<Worker> logger, MapperConfigurations mapperConfigurations, IProcessor processor, TelemetryClient telemetryClient)
+    public Worker(IOrchestrationService orchetrator, TelemetryClient telemetryClient, ILogger<Worker> logger)
     {
-        _logger = logger;
-        _mapperConfigurations = mapperConfigurations;
-        _processor = processor;
+        _orchetrator = orchetrator;
         _telemetryClient = telemetryClient;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await _orchetrator.StartProcessorAsync(stoppingToken);
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+            _logger.LogInformation("Ncea Mapping service started at: {time}", DateTimeOffset.Now);
 
             using (_telemetryClient.StartOperation<RequestTelemetry>("operation"))
             {
-                _logger.LogInformation("Metadata harversting started for {source}", _mapperConfigurations.ProcessorType);
-                await _processor.Process(stoppingToken);
-                _logger.LogInformation("Metadata harversting completed");
-                _telemetryClient.TrackEvent("Harvesting completed");
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+
+                _telemetryClient.TrackEvent("Ncea Mapping service up and running...");
             }
         }
     }

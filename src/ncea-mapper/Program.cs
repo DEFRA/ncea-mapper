@@ -14,7 +14,6 @@ using ncea.mapper.Processor;
 using ncea.mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using Microsoft.Extensions.Configuration;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -86,6 +85,7 @@ static void ConfigureLogging(HostApplicationBuilder builder)
                 config.ConnectionString = builder.Configuration.GetValue<string>("ApplicationInsights:ConnectionString"),
                 configureApplicationInsightsLoggerOptions: (options) => { }
             );
+        loggingBuilder.AddConsole();
         loggingBuilder.AddFilter<ApplicationInsightsLoggerProvider>(null, LogLevel.Information);
 
     });

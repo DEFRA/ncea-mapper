@@ -23,16 +23,18 @@ public class Worker : BackgroundService
     {
         await _orchetrator.StartProcessorAsync(stoppingToken);
 
+        _logger.LogInformation("Ncea Mapping service started at: {time}", DateTimeOffset.Now);
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            _logger.LogInformation("Ncea Mapping service started at: {time}", DateTimeOffset.Now);
-
             using (_telemetryClient.StartOperation<RequestTelemetry>("operation"))
             {
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
 
-                _telemetryClient.TrackEvent("Ncea Mapping service up and running...");
+                _telemetryClient.TrackEvent("Ncea Mapper service up and running...");
             }
         }
+
+        _logger.LogInformation("Ncea Mapping service stopped at: {time}", DateTimeOffset.Now);
     }
 }

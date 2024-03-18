@@ -28,7 +28,7 @@ securityContext: {}
 resources: {}
 
 autoscaling:
-  enabled: $(autoScalingEnabled)
+  enabled: false
   minReplicas: 1
   maxReplicas: $(autoScalingMaxReplicas)
   targetCPUUtilizationPercentage: 80

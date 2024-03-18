@@ -1,6 +1,4 @@
 parameters:
-  - name: envName
-    type: string
   - name: releaseName
     type: string
   - name: armServiceConnection
@@ -50,12 +48,14 @@ steps:
     command: 'upgrade'
     chartType: 'FilePath'
     chartPath: '$(Pipeline.Workspace)/ncea-mapper-$(Build.BuildNumber).tgz'
-    valueFile: $(Pipeline.Workspace)/chart/ncea-mapper/values/values.${{ parameters.envName }}.yaml
+    valueFile: $(Pipeline.Workspace)/chart/ncea-mapper/values/values.yaml
     overrideValues: |
         image.repository=$(containerRepositoryFullPath)
         image.tag=$(imageTag)
         serviceAccount.name=$(serviceAccountMapper)
         env.serviceBusHostName=$(serviceBusHostName)
         env.keyVaultUri=$(keyVaultUri)
+        autoscaling.enabled=$(autoScalingEnabled)
+        autoscaling.maxReplicas=$(autoScalingMaxReplicas)
     install: true
     force: true

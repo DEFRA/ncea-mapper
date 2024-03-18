@@ -21,18 +21,22 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _orchetrator.StartProcessorAsync(stoppingToken);
+        _logger.LogInformation("Ncea Mapping service started at: {time}", DateTimeOffset.Now);
 
-        while (!stoppingToken.IsCancellationRequested)
+        using (_telemetryClient.StartOperation<RequestTelemetry>("operation"))
         {
-            _logger.LogInformation("Ncea Mapping service started at: {time}", DateTimeOffset.Now);
+            await _orchetrator.StartProcessorAsync(stoppingToken);
 
-            using (_telemetryClient.StartOperation<RequestTelemetry>("operation"))
+            _telemetryClient.TrackEvent("Ncea Mapping service up and running...");
+
+            while (!stoppingToken.IsCancellationRequested)
             {
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
 
                 _telemetryClient.TrackEvent("Ncea Mapping service up and running...");
             }
         }
+
+        _logger.LogInformation("Ncea Mapping service stopped at: {time}", DateTimeOffset.Now);
     }
 }

@@ -49,7 +49,7 @@ spec:
             initialDelaySeconds: 15
             failureThreshold: 2
             timeoutSeconds: 3
-            periodSeconds: 60          
+            periodSeconds: 1800          
           env:
             - name: ServiceBusHostName
               value: {{ .Values.env.serviceBusHostName }}

@@ -1,20 +1,20 @@
 replicaCount: 1
 
 image:
-  repository: $(containerRepositoryFullPath)
+  repository: 
   pullPolicy: IfNotPresent
-  tag: $(imageTag)
+  tag: 
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  name: $(serviceAccountMapper)
+  name: 
 
 env:
-  serviceBusHostName: $(serviceBusHostName)
-  keyVaultUri: $(keyVaultUri)
+  serviceBusHostName: 
+  keyVaultUri: 
 
 podAnnotations: {}
 
@@ -28,9 +28,9 @@ securityContext: {}
 resources: {}
 
 autoscaling:
-  enabled: $(autoScalingEnabled)
+  enabled: 
   minReplicas: 1
-  maxReplicas: $(autoScalingMaxReplicas)
+  maxReplicas: 
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 

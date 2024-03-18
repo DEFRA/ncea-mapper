@@ -35,7 +35,7 @@ steps:
     releaseName: ${{ parameters.releaseName }}
     namespace: $(aksNamespace)
     command: 'uninstall'
-    arguments: ${{ parameters.releaseName }}}}
+    arguments: ${{ parameters.releaseName }}
 
 - task: HelmDeploy@0
   displayName: 'Helm Deploy'

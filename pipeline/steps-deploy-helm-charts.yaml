@@ -61,4 +61,5 @@ steps:
         autoscaling.maxReplicas=$(autoScalingMaxReplicas)
     install: true
     force: true
+    failOnStderr: false
     arguments: --debug

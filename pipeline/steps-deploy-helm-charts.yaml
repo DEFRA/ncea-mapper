@@ -58,4 +58,5 @@ steps:
         env.serviceBusHostName=$(serviceBusHostName)
         env.keyVaultUri=$(keyVaultUri)
     install: true
-    force: true
+    # force: true
+    arguments: --dry-run --debug

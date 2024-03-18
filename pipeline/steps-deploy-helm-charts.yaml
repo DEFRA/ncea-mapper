@@ -57,6 +57,8 @@ steps:
         serviceAccount.name=$(serviceAccountMapper)
         env.serviceBusHostName=$(serviceBusHostName)
         env.keyVaultUri=$(keyVaultUri)
+        autoscaling.enabled=$(autoScalingEnabled)
+        autoscaling.maxReplicas=$(autoScalingMaxReplicas)
     install: true
-    # force: true
+    force: true
     arguments: --dry-run --debug

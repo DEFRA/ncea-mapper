@@ -29,7 +29,7 @@ steps:
   condition: succeeded()
   inputs:
     connectionType: 'Kubernetes Service Connection'
-    kubernetesServiceConnection: ${{ parameters.aksServiceConnection }}
+    kubernetesServiceConnection: ${{ parameters.armServiceConnection }}
     releaseName: ${{ parameters.releaseName }}
     namespace: $(aksNamespace)
     command: 'uninstall'

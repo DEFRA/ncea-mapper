@@ -14,6 +14,6 @@ steps:
       echo "Logging into ACR"
       docker login $(acrContainerRegistry) -u $(acrUser) -p $PASSWORD
       echo "Building Container"
-      docker build -t '$(acrContainerRegistry)/$(acrContainerRepositoryMapper):$(imageTag)' .
+      docker build -f ../src/ncea-mapper/Dockerfile -t '$(acrContainerRegistry)/$(acrContainerRepositoryMapper):$(imageTag)' .
       echo "Pushing Container"
       docker push '$(acrContainerRegistry)/$(acrContainerRepositoryMapper):$(imageTag)'

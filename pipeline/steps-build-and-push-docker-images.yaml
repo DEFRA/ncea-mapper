@@ -13,9 +13,8 @@ steps:
       PASSWORD=$(az acr login --name $(acrContainerRegistry) --expose-token --output tsv --query accessToken)
       echo "Logging into ACR"
       docker login $(acrContainerRegistry) -u $(acrUser) -p $PASSWORD
-      echo "Building Container"
-      pwd
-      ls
+      cd $(Build.ArtifactStagingDirectory) && ls
+      echo "Building Container"      
       docker build -f src/ncea-mapper/Dockerfile -t '$(acrContainerRegistry)/$(acrContainerRepositoryMapper):$(imageTag)' .
       echo "Pushing Container"
       docker push '$(acrContainerRegistry)/$(acrContainerRepositoryMapper):$(imageTag)'

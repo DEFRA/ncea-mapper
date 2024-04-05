@@ -20,6 +20,7 @@ public static class OrchestrationServiceForTests
         List<KeyValuePair<string, string?>> lstProps = new List<KeyValuePair<string, string?>>();
         lstProps.Add(new KeyValuePair<string, string?>("HarvesterQueueName", "test-HarvesterQueueName"));
         lstProps.Add(new KeyValuePair<string, string?>("MapperQueueName", "test-MapperQueueName"));
+        lstProps.Add(new KeyValuePair<string, string?>("MdcSchemaLocation", "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc"));
 
         configuration = new ConfigurationBuilder()
                             .AddInMemoryCollection(lstProps)

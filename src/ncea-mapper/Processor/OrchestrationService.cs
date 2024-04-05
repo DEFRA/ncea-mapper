@@ -13,6 +13,7 @@ public class OrchestrationService : IOrchestrationService
     private readonly ServiceBusProcessor _processor;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<OrchestrationService> _logger;
+    private readonly string? _mdcSchemaLocation;
 
     public OrchestrationService(IConfiguration configuration,
         IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory,
@@ -22,6 +23,7 @@ public class OrchestrationService : IOrchestrationService
     {
         var harvesterQueueName = configuration.GetValue<string>("HarvesterQueueName");
         var mapperQueueName = configuration.GetValue<string>("MapperQueueName");
+        _mdcSchemaLocation = configuration.GetValue<string>("MdcSchemaLocation");
 
         _processor = serviceBusProcessorFactory.CreateClient(harvesterQueueName);
         _sender = serviceBusSenderFactory.CreateClient(mapperQueueName);
@@ -50,7 +52,7 @@ public class OrchestrationService : IOrchestrationService
         {
             var body = args.Message.Body.ToString();
             var dataSource = args.Message.ApplicationProperties["DataSource"].ToString();
-            var mdcMappedData = await _serviceProvider.GetRequiredKeyedService<IMapperService>(dataSource).Transform(body);
+            var mdcMappedData = await _serviceProvider.GetRequiredKeyedService<IMapperService>(dataSource).Transform(_mdcSchemaLocation!, body);
             
             await SendMessageAsync(mdcMappedData, dataSource!);
 

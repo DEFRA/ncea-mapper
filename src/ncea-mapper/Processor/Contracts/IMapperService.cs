@@ -2,5 +2,5 @@
 
 public interface IMapperService
 {
-    Task<string> Transform(string harvestedData, CancellationToken cancellationToken = default);
+    Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default);
 }

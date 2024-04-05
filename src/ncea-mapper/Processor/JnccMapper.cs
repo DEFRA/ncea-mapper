@@ -10,7 +10,7 @@ public class JnccMapper : IMapperService
     {
         _logger = logger;
     }
-    public async Task<string> Transform(string harvestedData, CancellationToken cancellationToken = default)
+    public async Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Jncc transformer");
         return await Task.FromResult(harvestedData);

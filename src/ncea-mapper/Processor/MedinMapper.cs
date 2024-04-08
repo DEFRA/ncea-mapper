@@ -1,12 +1,5 @@
 ﻿using Ncea.Mapper.Processors.Contracts;
-using System.Reflection.Emit;
-using System;
-using System.Reflection.Metadata;
-using System.Security.Cryptography;
 using System.Xml.Linq;
-using YamlDotNet.Core.Tokens;
-using System.Xml.Schema;
-using System.Xml;
 
 namespace Ncea.Mapper.Processors;
 
@@ -35,7 +28,7 @@ public class MedinMapper : IMapperService
         }        
 
         _logger.LogInformation("Medin transformer");
-        return await Task.FromResult(harvestedData);
+        return await Task.FromResult(responseXml.ToString());
     }
 
     private static XElement CreateNceaClassifierInfoNode(string mdcSchemaLocationStr)

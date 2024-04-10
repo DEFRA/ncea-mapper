@@ -15,7 +15,7 @@ public class MedinMapper : IMapperService
     {
         var responseXml = XDocument.Parse(harvestedData);
         var rootNode = responseXml.Root;
-
+        var fileIdentifier = GetFileIdentifier(rootNode!);
         if (rootNode != null)
         {
             XNamespace mdc = mdcSchemaLocation;
@@ -25,9 +25,9 @@ public class MedinMapper : IMapperService
             var nceaClassifierInfoNode = CreateNceaClassifierInfoNode(mdcSchemaLocation);
             rootNode.Add(nceaIdentifiersNode);
             rootNode.Add(nceaClassifierInfoNode);
-        }        
+        }
+        _logger.LogInformation("Mapping completed for DataSource: Medin, FileIdentifier: {fileIdentifier}", fileIdentifier);
 
-        _logger.LogInformation("Medin transformer");
         return await Task.FromResult(responseXml.ToString());
     }
 
@@ -71,5 +71,15 @@ public class MedinMapper : IMapperService
     {
         XNamespace gcoNamespace = "http://www.isotc211.org/2005/gco";
         return new XElement(gcoNamespace + "CharacterString", value);
+    }
+
+    private static string? GetFileIdentifier(XElement xmlElement)
+    {
+        var gmdNameSpaceString = "http://www.isotc211.org/2005/gmd";
+        var fileIdentifierXmlElement = xmlElement.Descendants()
+                               .FirstOrDefault(n => n.Name.Namespace.NamespaceName == gmdNameSpaceString
+                               && n.Name.LocalName == "fileIdentifier");
+        var fileIdentifier = fileIdentifierXmlElement?.Descendants()?.FirstOrDefault()?.Value;
+        return fileIdentifier;
     }
 }

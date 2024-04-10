@@ -32,56 +32,31 @@ public class MedinMapper : IMapperService
     }
 
     private static XElement CreateNceaClassifierInfoNode(string mdcSchemaLocationStr)
-    {
-        XNamespace gcoNamespace = "http://www.isotc211.org/2005/gco";
+    {        
         XNamespace mdcSchemaLocation = mdcSchemaLocationStr;
-        var nceaClassifierInfo = new XElement(mdcSchemaLocation + "nceaClassifierInfo");
-
-        //Create classifierType node
+        var nceaClassifierInfo = new XElement(mdcSchemaLocation + "nceaClassifierInfo");        
         var nc_Classifiers = new XElement(mdcSchemaLocation + "NC_Classifiers");
-        var classifier = new XElement(mdcSchemaLocation + "classifier");
-        var classifierType = new XElement(mdcSchemaLocation + "classifierType");
-        var classifierTypeCharacterString = new XElement(gcoNamespace + "CharacterString");
-        classifierType.Add(classifierTypeCharacterString);
-
-        //Create classifierValue node
-        var classifierValue = new XElement(mdcSchemaLocation + "classifierValue");
-        var classifierValueCharacterString = new XElement(gcoNamespace + "CharacterString");
-        classifierValue.Add(classifierValueCharacterString);
-
-        //Create child nc_Classifiers node
-        var nc_ClassifiersChild = new XElement(mdcSchemaLocation + "NC_Classifiers");
-
-        classifier.Add(classifierType);
-        classifier.Add(classifierValue);
-        classifier.Add(nc_ClassifiersChild);
-        nc_Classifiers.Add(classifier);
         nceaClassifierInfo.Add(nc_Classifiers);
-
         return nceaClassifierInfo;
     }
 
     private static XElement CreateNceaIdentifiersNode(string mdcSchemaLocationStr)
-    {
-        XNamespace gcoNamespace = "http://www.isotc211.org/2005/gco";
+    {        
         XNamespace mdcSchemaLocation = mdcSchemaLocationStr;
         var nceaIdentifiers = new XElement(mdcSchemaLocation + "nceaIdentifiers");
 
         //Create ProjectID node
         var nceaIdentifiersProjectID = new XElement(mdcSchemaLocation + "ProjectID");
         var nceaIdentifiersProjectIDprojectID = new XElement(mdcSchemaLocation + "projectID");
-        var gcoCharacterString = new XElement(gcoNamespace + "CharacterString");
-        nceaIdentifiersProjectIDprojectID.Add(gcoCharacterString);
+        nceaIdentifiersProjectIDprojectID.Add(GetGcoCharacterString("Medin"));
         nceaIdentifiersProjectID.Add(nceaIdentifiersProjectIDprojectID);
 
         //Create MasterReferenceID node
         var nceaMasterReferenceID = new XElement(mdcSchemaLocation + "MasterReferenceID");
         var nceaCatalogueEntry = new XElement(mdcSchemaLocation + "catalogueEntry");
-        var nceaCatalogueEntrygCharacterString = new XElement(gcoNamespace + "CharacterString");
         var nceaSourceSystemReferenceID = new XElement(mdcSchemaLocation + "sourceSystemReferenceID");
-        var nceaSourceSystemReferenceIDCharacterString = new XElement(gcoNamespace + "CharacterString");
-        nceaSourceSystemReferenceID.Add(nceaSourceSystemReferenceIDCharacterString);
-        nceaCatalogueEntry.Add(nceaCatalogueEntrygCharacterString);
+        nceaSourceSystemReferenceID.Add(GetGcoCharacterString("Medin"));
+        nceaCatalogueEntry.Add(GetGcoCharacterString("Medin"));
         nceaMasterReferenceID.Add(nceaCatalogueEntry);
         nceaMasterReferenceID.Add(nceaSourceSystemReferenceID);
 
@@ -90,5 +65,11 @@ public class MedinMapper : IMapperService
         nceaIdentifiers.Add(nceaMasterReferenceID);
 
         return nceaIdentifiers;
+    }
+
+    private static XElement GetGcoCharacterString (string value)
+    {
+        XNamespace gcoNamespace = "http://www.isotc211.org/2005/gco";
+        return new XElement(gcoNamespace + "CharacterString", value);
     }
 }

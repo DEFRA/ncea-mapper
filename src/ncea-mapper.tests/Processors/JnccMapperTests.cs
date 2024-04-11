@@ -27,7 +27,7 @@ public class JnccMapperTests
 
 
         // Act
-        await jnccService.Transform(It.IsAny<string>(), It.IsAny<CancellationToken>());
+        await jnccService.Transform(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>());
 
 
         // Assert

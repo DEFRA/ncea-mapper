@@ -1,4 +1,5 @@
-﻿using Ncea.Mapper.Processors.Contracts;
+﻿using Ncea.Mapper.Constants;
+using Ncea.Mapper.Processors.Contracts;
 using System.Xml.Linq;
 
 namespace Ncea.Mapper.Processors;
@@ -21,7 +22,7 @@ public class MedinMapper : IMapperService
             XNamespace mdc = mdcSchemaLocation;
             var mdcNameSpaceAttribute = new XAttribute(XNamespace.Xmlns + "mdc", mdc.NamespaceName);
             rootNode!.Add(mdcNameSpaceAttribute);
-            var nceaIdentifiersNode = CreateNceaIdentifiersNode(mdcSchemaLocation);
+            var nceaIdentifiersNode = CreateNceaIdentifiersNode(fileIdentifier, mdcSchemaLocation);
             var nceaClassifierInfoNode = CreateNceaClassifierInfoNode(mdcSchemaLocation);
             rootNode.Add(nceaIdentifiersNode);
             rootNode.Add(nceaClassifierInfoNode);
@@ -40,10 +41,13 @@ public class MedinMapper : IMapperService
         return nceaClassifierInfo;
     }
 
-    private static XElement CreateNceaIdentifiersNode(string mdcSchemaLocationStr)
+    private static XElement CreateNceaIdentifiersNode(string fileIdentifier, string mdcSchemaLocationStr)
     {        
         XNamespace mdcSchemaLocation = mdcSchemaLocationStr;
         var nceaIdentifiers = new XElement(mdcSchemaLocation + "nceaIdentifiers");
+        var dataSource = Convert.ToString(ProcessorType.Medin);
+        var nceaSourceSystemReferenceIDValue = fileIdentifier;
+        var nceaCatalogueEntryValue = string.Concat(dataSource, "_", fileIdentifier);
 
         //Create ProjectID node
         var nceaIdentifiersProjectID = new XElement(mdcSchemaLocation + "ProjectID");
@@ -55,8 +59,8 @@ public class MedinMapper : IMapperService
         var nceaMasterReferenceID = new XElement(mdcSchemaLocation + "MasterReferenceID");
         var nceaCatalogueEntry = new XElement(mdcSchemaLocation + "catalogueEntry");
         var nceaSourceSystemReferenceID = new XElement(mdcSchemaLocation + "sourceSystemReferenceID");
-        nceaSourceSystemReferenceID.Add(GetGcoCharacterString("Medin"));
-        nceaCatalogueEntry.Add(GetGcoCharacterString("Medin"));
+        nceaSourceSystemReferenceID.Add(GetGcoCharacterString(nceaSourceSystemReferenceIDValue));
+        nceaCatalogueEntry.Add(GetGcoCharacterString(nceaCatalogueEntryValue));
         nceaMasterReferenceID.Add(nceaCatalogueEntry);
         nceaMasterReferenceID.Add(nceaSourceSystemReferenceID);
 
@@ -73,13 +77,13 @@ public class MedinMapper : IMapperService
         return new XElement(gcoNamespace + "CharacterString", value);
     }
 
-    private static string? GetFileIdentifier(XElement xmlElement)
+    private static string GetFileIdentifier(XElement xmlElement)
     {
         var gmdNameSpaceString = "http://www.isotc211.org/2005/gmd";
         var fileIdentifierXmlElement = xmlElement.Descendants()
                                .FirstOrDefault(n => n.Name.Namespace.NamespaceName == gmdNameSpaceString
                                && n.Name.LocalName == "fileIdentifier");
         var fileIdentifier = fileIdentifierXmlElement?.Descendants()?.FirstOrDefault()?.Value;
-        return fileIdentifier;
+        return (fileIdentifier??string.Empty);
     }
 }

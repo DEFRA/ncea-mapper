@@ -49,12 +49,6 @@ public class MedinMapper : IMapperService
         var nceaSourceSystemReferenceIDValue = fileIdentifier;
         var nceaCatalogueEntryValue = string.Concat(dataSource, "_", fileIdentifier);
 
-        //Create ProjectID node
-        var nceaIdentifiersProjectID = new XElement(mdcSchemaLocation + "ProjectID");
-        var nceaIdentifiersProjectIDprojectID = new XElement(mdcSchemaLocation + "projectID");
-        nceaIdentifiersProjectIDprojectID.Add(GetGcoCharacterString("Medin"));
-        nceaIdentifiersProjectID.Add(nceaIdentifiersProjectIDprojectID);
-
         //Create MasterReferenceID node
         var nceaMasterReferenceID = new XElement(mdcSchemaLocation + "MasterReferenceID");
         var nceaCatalogueEntry = new XElement(mdcSchemaLocation + "catalogueEntry");
@@ -65,7 +59,6 @@ public class MedinMapper : IMapperService
         nceaMasterReferenceID.Add(nceaSourceSystemReferenceID);
 
         //Create nceaIdentifiers node
-        nceaIdentifiers.Add(nceaIdentifiersProjectID);
         nceaIdentifiers.Add(nceaMasterReferenceID);
 
         return nceaIdentifiers;

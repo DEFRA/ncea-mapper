@@ -46,15 +46,14 @@ public class MedinMapper : IMapperService
         XNamespace mdcSchemaLocation = mdcSchemaLocationStr;
         var nceaIdentifiers = new XElement(mdcSchemaLocation + "nceaIdentifiers");
         var dataSource = Convert.ToString(ProcessorType.Medin);
-        var nceaSourceSystemReferenceIDValue = fileIdentifier;
-        var nceaCatalogueEntryValue = string.Concat(dataSource, "_", fileIdentifier);
+        var nceaRefValue = string.Concat(dataSource, "_", fileIdentifier);
 
         //Create MasterReferenceID node
         var nceaMasterReferenceID = new XElement(mdcSchemaLocation + "MasterReferenceID");
         var nceaCatalogueEntry = new XElement(mdcSchemaLocation + "catalogueEntry");
         var nceaSourceSystemReferenceID = new XElement(mdcSchemaLocation + "sourceSystemReferenceID");
-        nceaSourceSystemReferenceID.Add(GetGcoCharacterString(nceaSourceSystemReferenceIDValue));
-        nceaCatalogueEntry.Add(GetGcoCharacterString(nceaCatalogueEntryValue));
+        nceaSourceSystemReferenceID.Add(GetGcoCharacterString(nceaRefValue));
+        nceaCatalogueEntry.Add(GetGcoCharacterString(nceaRefValue));
         nceaMasterReferenceID.Add(nceaCatalogueEntry);
         nceaMasterReferenceID.Add(nceaSourceSystemReferenceID);
 

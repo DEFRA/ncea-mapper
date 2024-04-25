@@ -2,6 +2,7 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
 using ncea.mapper.Processor.Contracts;
+using Ncea.Mapper.Constants;
 using Ncea.Mapper.Processors.Contracts;
 
 namespace ncea.mapper.Processor;
@@ -52,7 +53,8 @@ public class OrchestrationService : IOrchestrationService
         {
             var body = args.Message.Body.ToString();
             var dataSource = args.Message.ApplicationProperties["DataSource"].ToString();
-            var mdcMappedData = await _serviceProvider.GetRequiredKeyedService<IMapperService>(dataSource).Transform(_mdcSchemaLocation!, body);
+            var dataSourceName = Enum.Parse(typeof(ProcessorType), dataSource!, true).ToString();
+            var mdcMappedData = await _serviceProvider.GetRequiredKeyedService<IMapperService>(dataSourceName).Transform(_mdcSchemaLocation!, body);
             
             await SendMessageAsync(mdcMappedData, dataSource!);
 

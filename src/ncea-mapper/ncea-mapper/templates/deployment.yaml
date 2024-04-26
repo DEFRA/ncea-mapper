@@ -39,10 +39,10 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: health-check
-              containerPort: 5000
-              hostPort: 5000
+          #ports:
+          #  - name: health-check
+          #    containerPort: 5000
+          #    hostPort: 5000
           # livenessProbe:
           #   tcpSocket:
           #     port: health-check

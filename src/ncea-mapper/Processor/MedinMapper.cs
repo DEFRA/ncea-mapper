@@ -1,4 +1,7 @@
-﻿using Ncea.Mapper.Constants;
+﻿using AutoMapper;
+using ncea.mapper.Extensions;
+using ncea.mapper.Models;
+using Ncea.Mapper.Constants;
 using Ncea.Mapper.Processors.Contracts;
 using System.Xml.Linq;
 
@@ -7,75 +10,53 @@ namespace Ncea.Mapper.Processors;
 public class MedinMapper : IMapperService
 {    
     private readonly ILogger<MedinMapper> _logger;
+    private readonly IMapper _mapper;
 
-    public MedinMapper(ILogger<MedinMapper> logger)
+    public MedinMapper(ILogger<MedinMapper> logger, IMapper mapper)
     {     
         _logger = logger;
+        _mapper = mapper;
     }
     public async Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default)
     {
-        var responseXml = XDocument.Parse(harvestedData);
-        var rootNode = responseXml.Root;
-        var fileIdentifier = GetFileIdentifier(rootNode!);
-        if (rootNode != null)
-        {
-            XNamespace mdc = mdcSchemaLocation;
-            var mdcNameSpaceAttribute = new XAttribute(XNamespace.Xmlns + "mdc", mdc.NamespaceName);
-            rootNode!.Add(mdcNameSpaceAttribute);
-            var nceaIdentifiersNode = CreateNceaIdentifiersNode(fileIdentifier, mdcSchemaLocation);
-            var nceaClassifierInfoNode = CreateNceaClassifierInfoNode(mdcSchemaLocation);
-            rootNode.Add(nceaIdentifiersNode);
-            rootNode.Add(nceaClassifierInfoNode);
-        }
+        //Deserialize from Gemini2.3 Metadata string to MDC metadata
+        var gemini2_3_Metadata = harvestedData.Deserialize<Gemini2_3_MD_Metadata>();
+        var mdc_Metadata = _mapper.Map<Mdc_MD_Metadata>(gemini2_3_Metadata);
+
+        //Populate MDC classifier fields
+        var fileIdentifier = mdc_Metadata.fileIdentifier?.CharacterString;
+        mdc_Metadata.nceaIdentifiers = CreateNceaIdentifiersNode(fileIdentifier!);
+        mdc_Metadata.nceaClassifierInfo = CreateNceaClassifierInfoNode();
+
+        //Serialize MDC metadata object to XML string
+        var mdcMetadataString = mdc_Metadata?.Serialize();
         _logger.LogInformation("Mapping completed for DataSource: Medin, FileIdentifier: {fileIdentifier}", fileIdentifier);
-
-        return await Task.FromResult(responseXml.ToString());
+        
+        return await Task.FromResult(mdcMetadataString!);
     }
 
-    private static XElement CreateNceaClassifierInfoNode(string mdcSchemaLocationStr)
-    {        
-        XNamespace mdcSchemaLocation = mdcSchemaLocationStr;
-        var nceaClassifierInfo = new XElement(mdcSchemaLocation + "nceaClassifierInfo");        
-        var nc_Classifiers = new XElement(mdcSchemaLocation + "NC_Classifiers");
-        nceaClassifierInfo.Add(nc_Classifiers);
-        return nceaClassifierInfo;
+    private static nceaClassifierInfo CreateNceaClassifierInfoNode()
+    {       
+        return new nceaClassifierInfo() { NC_Classifiers = [] };
     }
 
-    private static XElement CreateNceaIdentifiersNode(string fileIdentifier, string mdcSchemaLocationStr)
-    {        
-        XNamespace mdcSchemaLocation = mdcSchemaLocationStr;
-        var nceaIdentifiers = new XElement(mdcSchemaLocation + "nceaIdentifiers");
+    private static nceaIdentifiers CreateNceaIdentifiersNode(string fileIdentifier)
+    {
         var dataSource = Convert.ToString(ProcessorType.Medin);
         var nceaRefValue = string.Concat(dataSource, "_", fileIdentifier);
-
-        //Create MasterReferenceID node
-        var nceaMasterReferenceID = new XElement(mdcSchemaLocation + "MasterReferenceID");
-        var nceaCatalogueEntry = new XElement(mdcSchemaLocation + "catalogueEntry");
-        var nceaSourceSystemReferenceID = new XElement(mdcSchemaLocation + "sourceSystemReferenceID");
-        nceaSourceSystemReferenceID.Add(GetGcoCharacterString(nceaRefValue));
-        nceaCatalogueEntry.Add(GetGcoCharacterString(nceaRefValue));
-        nceaMasterReferenceID.Add(nceaCatalogueEntry);
-        nceaMasterReferenceID.Add(nceaSourceSystemReferenceID);
-
-        //Create nceaIdentifiers node
-        nceaIdentifiers.Add(nceaMasterReferenceID);
-
-        return nceaIdentifiers;
-    }
-
-    private static XElement GetGcoCharacterString (string value)
-    {
-        XNamespace gcoNamespace = "http://www.isotc211.org/2005/gco";
-        return new XElement(gcoNamespace + "CharacterString", value);
-    }
-
-    private static string GetFileIdentifier(XElement xmlElement)
-    {
-        var gmdNameSpaceString = "http://www.isotc211.org/2005/gmd";
-        var fileIdentifierXmlElement = xmlElement.Descendants()
-                               .FirstOrDefault(n => n.Name.Namespace.NamespaceName == gmdNameSpaceString
-                               && n.Name.LocalName == "fileIdentifier");
-        var fileIdentifier = fileIdentifierXmlElement?.Descendants()?.FirstOrDefault()?.Value;
-        return (fileIdentifier??string.Empty);
+        return new nceaIdentifiers()
+                    {
+                        MasterReferenceID = new nceaIdentifiersMasterReferenceID()
+                        {
+                            catalogueEntry = new nceaIdentifiersMasterReferenceIDCatalogueEntry() 
+                            { 
+                                CharacterString = nceaRefValue
+                            },
+                            sourceSystemReferenceID = new nceaIdentifiersMasterReferenceIDSourceSystemReferenceID() 
+                            { 
+                                CharacterString = nceaRefValue
+                            }
+                        }
+                    };
     }
 }

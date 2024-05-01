@@ -2,6 +2,7 @@
 using Moq;
 using Ncea.Mapper.Processors.Contracts;
 using Ncea.Mapper.Processors;
+using ncea.mapper.AutoMapper;
 
 namespace ncea_mapper.tests.Clients
 {
@@ -15,9 +16,9 @@ namespace ncea_mapper.tests.Clients
             serviceCollection.AddLogging();
             serviceCollection.AddKeyedSingleton<IMapperService, JnccMapper>("Jncc");
             serviceCollection.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
+            serviceCollection.AddAutoMapper(typeof(MappingProfile));
 
-            
-            
+
             // Create the ServiceProvider
             var serviceProvider = serviceCollection.BuildServiceProvider();
 

@@ -19,9 +19,6 @@ namespace ncea.mapper.Extensions
 
         public static string Serialize<T>(this T value)
         {
-            if (EqualityComparer<T>.Default.Equals(value, default(T)))
-                return string.Empty;
-
             var xmlSerializer = new XmlSerializer(typeof(T));
 
             using (var stringWriter = new StringWriter())

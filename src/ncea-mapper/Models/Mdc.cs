@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace ncea.mapper.Models
 {
     [XmlRoot(ElementName = "MD_Metadata", Namespace = "http://www.isotc211.org/2005/gmd")]
-    public class Mdc_MD_Metadata: Gemini2_3_MD_Metadata
+    public class MdcMdMetadata: Gemini23MdMetadata
     {
         [XmlElement(ElementName = "nceaClassifierInfo", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
         public nceaClassifierInfo? nceaClassifierInfo { get; set; }
@@ -13,7 +13,7 @@ namespace ncea.mapper.Models
         public nceaIdentifiers? nceaIdentifiers { get; set; }
 
         [XmlAttribute(AttributeName = "mdc", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/")]
-        public string mdc { get; set; }
+        public string? mdc { get; set; }
     }
 
     [XmlRoot(ElementName = "nceaClassifierInfo", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]

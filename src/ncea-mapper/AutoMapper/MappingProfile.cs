@@ -12,7 +12,7 @@ namespace ncea.mapper.AutoMapper
     {
         public MappingProfile()
         {
-            CreateMap<Gemini2_3_MD_Metadata, Mdc_MD_Metadata>();
+            CreateMap<Gemini23MdMetadata, MdcMdMetadata>();
         }
     }
 }

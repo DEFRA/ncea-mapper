@@ -20,8 +20,8 @@ public class MedinMapper : IMapperService
     public async Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default)
     {
         //Deserialize from Gemini2.3 Metadata string to MDC metadata
-        var gemini2_3_Metadata = harvestedData.Deserialize<Gemini2_3_MD_Metadata>();
-        var mdc_Metadata = _mapper.Map<Mdc_MD_Metadata>(gemini2_3_Metadata);
+        var gemini2_3_Metadata = harvestedData.Deserialize<Gemini23MdMetadata>();
+        var mdc_Metadata = _mapper.Map<MdcMdMetadata>(gemini2_3_Metadata);
 
         //Populate MDC classifier fields
         var fileIdentifier = mdc_Metadata.FileIdentifier?.CharacterString;

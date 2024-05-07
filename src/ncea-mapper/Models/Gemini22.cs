@@ -6,7 +6,7 @@
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
     [System.Xml.Serialization.XmlRootAttribute(ElementName = "MD_Metadata", Namespace = "http://www.isotc211.org/2005/gmd", IsNullable = false)]
-    public class Gemini2_2_MD_Metadata: Gemini2_3_MD_Metadata
+    public class Gemini22MdMetadata : Gemini23MdMetadata
     {
     }
 }

@@ -13,21 +13,154 @@ namespace ncea.mapper.Models
         public MD_MetadataFileIdentifier? fileIdentifier { get; set; }
         public MD_MetadataLanguage? language { get; set; }
         public MD_MetadataCharacterSet? characterSet { get; set; }
-        public MD_MetadataContact? contact { get; set; }
+
+        [XmlElementAttribute("contact")]
+        public MD_MetadataContact[]? contact { get; set; }
         public MD_MetadataDateStamp? dateStamp { get; set; }
         public MD_MetadataMetadataStandardName? metadataStandardName { get; set; }
         public MD_MetadataMetadataStandardVersion? metadataStandardVersion { get; set; }
-        public MD_MetadataSpatialRepresentationInfo? spatialRepresentationInfo { get; set; }
-        public MD_MetadataReferenceSystemInfo? referenceSystemInfo { get; set; }
-        public MD_MetadataIdentificationInfo? identificationInfo { get; set; }
+        [XmlElementAttribute("spatialRepresentationInfo")]
+        public MD_MetadataSpatialRepresentationInfo[]? spatialRepresentationInfo { get; set; }
+
+        [XmlElementAttribute("referenceSystemInfo")]
+        public MD_MetadataReferenceSystemInfo[]? referenceSystemInfo { get; set; }
+        public MD_MetadataIdentificationInfo[]? identificationInfo { get; set; }
         public MD_MetadataDistributionInfo? distributionInfo { get; set; }
-        public MD_MetadataDataQualityInfo? dataQualityInfo { get; set; }
+        public MD_MetadataDataQualityInfo[]? dataQualityInfo { get; set; }
 
-
-        public MD_MetadataHierarchyLevel? hierarchyLevel { get; set; }
-        public MD_MetadataHierarchyLevelName? hierarchyLevelName { get; set; }
+        [XmlElementAttribute("hierarchyLevel")]
+        public MD_MetadataHierarchyLevel[]? hierarchyLevel { get; set; }
+        
+        [XmlElementAttribute("hierarchyLevelName")]
+        public MD_MetadataHierarchyLevelName[]? hierarchyLevelName { get; set; }
         public MD_MetadataParentIdentifier? parentIdentifier { get; set; }
+
+        [XmlElementAttribute("locale")]
+        public MD_MetadataLocale[]? locale { get; set; }
+        public MD_MetadataDataSetURI? dataSetURI { get; set; }
+        [XmlAttributeAttribute()]
+        public string? id { get; set; }
+        [XmlAttributeAttribute()]
+        public string? uuid { get; set; }
+
     }
+
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataDataSetURI : CharacterStringBase
+    {
+    }
+
+    /// <remarks/>
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataLocale
+    {
+        public MD_MetadataLocalePT_Locale[] PT_Locale { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        public string? type { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        public string? href { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        public string? role { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        public string? arcrole { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        public string? title { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        public string? show { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        public string? actuate { get; set; }
+
+        [XmlAttributeAttribute()]
+        public string? uuidref { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.isotc211.org/2005/gco")]
+        public string? nilReason { get; set; }
+    }
+
+    /// <remarks/>
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataLocalePT_Locale
+    {
+        public MD_MetadataLocalePT_LocaleLanguageCode languageCode { get; set; }
+        public MD_MetadataLocalePT_LocaleCountry country { get; set; }
+        public MD_MetadataLocalePT_LocaleCharacterEncoding characterEncoding { get; set; }
+
+        [XmlAttributeAttribute()]
+        public string id { get; set; }
+
+        [XmlAttributeAttribute()]
+        public string uuid { get; set; }
+    }
+
+    /// <remarks/>
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataLocalePT_LocaleLanguageCode
+    {
+        public MD_MetadataLocalePT_LocaleLanguageCodeLanguageCode LanguageCode { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.isotc211.org/2005/gco")]
+        public string nilReason { get; set; }
+    }
+
+    /// <remarks/>
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataLocalePT_LocaleLanguageCodeLanguageCode : CodeBase 
+    { }
+
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataLocalePT_LocaleCountry
+    {
+        public MD_MetadataLocalePT_LocaleCountryCountry Country { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.isotc211.org/2005/gco")]
+        public string nilReason { get; set; }
+    }
+
+    /// <remarks/>
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataLocalePT_LocaleCountryCountry : CodeBase
+    {
+    }
+
+    /// <remarks/>
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataLocalePT_LocaleCharacterEncoding
+    {
+        public MD_MetadataLocalePT_LocaleCharacterEncodingMD_CharacterSetCode MD_CharacterSetCode { get; set; }
+
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.isotc211.org/2005/gco")]
+        public string nilReason { get; set; }
+    }
+
+    /// <remarks/>
+    [SerializableAttribute()]
+    [DesignerCategoryAttribute("code")]
+    [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
+    public partial class MD_MetadataLocalePT_LocaleCharacterEncodingMD_CharacterSetCode:CodeBase
+    { }
 
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
@@ -40,16 +173,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataHierarchyLevelMD_ScopeCode
+    public partial class MD_MetadataHierarchyLevelMD_ScopeCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
-
-        [XmlTextAttribute()]
-        public string? Value { get; set; }
     }
 
     [SerializableAttribute()]
@@ -91,13 +216,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataCharacterSetMD_CharacterSetCode
+    public partial class MD_MetadataCharacterSetMD_CharacterSetCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
     }
 
 
@@ -155,13 +275,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataContactCI_ResponsiblePartyRoleCI_RoleCode
+    public partial class MD_MetadataContactCI_ResponsiblePartyRoleCI_RoleCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -220,13 +335,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataSpatialRepresentationInfoMD_VectorSpatialRepresentationTopologyLevelMD_TopologyLevelCode
+    public partial class MD_MetadataSpatialRepresentationInfoMD_VectorSpatialRepresentationTopologyLevelMD_TopologyLevelCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -260,13 +370,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataSpatialRepresentationInfoMD_VectorSpatialRepresentationGeometricObjectsMD_GeometricObjectsGeometricObjectTypeMD_GeometricObjectTypeCode
+    public partial class MD_MetadataSpatialRepresentationInfoMD_VectorSpatialRepresentationGeometricObjectsMD_GeometricObjectsGeometricObjectTypeMD_GeometricObjectTypeCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -454,13 +559,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationCitationCI_CitationDateCI_DateDateTypeCI_DateTypeCode
+    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationCitationCI_CitationDateCI_DateDateTypeCI_DateTypeCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -483,13 +583,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationCitationCI_CitationPresentationFormCI_PresentationFormCode
+    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationCitationCI_CitationPresentationFormCI_PresentationFormCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -553,13 +648,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationStatusMD_ProgressCode
+    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationStatusMD_ProgressCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -701,13 +791,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationPointOfContactCI_ResponsiblePartyRoleCI_RoleCode
+    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationPointOfContactCI_ResponsiblePartyRoleCI_RoleCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -816,13 +901,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationDescriptiveKeywordsMD_KeywordsTypeMD_KeywordTypeCode
+    public partial class MD_MetadataIdentificationInfoMD_DataIdentificationDescriptiveKeywordsMD_KeywordsTypeMD_KeywordTypeCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -1255,12 +1335,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataDataQualityInfoDQ_DataQualityScopeDQ_ScopeLevelMD_ScopeCode
+    public partial class MD_MetadataDataQualityInfoDQ_DataQualityScopeDQ_ScopeLevelMD_ScopeCode : CodeBase
     {
-        [XmlAttributeAttribute()]
-        public string? codeList { get; set; }
-        [XmlAttributeAttribute()]
-        public string? codeListValue { get; set; }
     }
 
 
@@ -1295,10 +1371,10 @@ namespace ncea.mapper.Models
     [XmlRootAttribute(Namespace = "http://www.isotc211.org/2005/gmx", IsNullable = false)]
     public partial class Anchor
     {
-        [XmlAttributeAttribute(Form = System.Xml.Schema.XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
         public string? href { get; set; }
 
-        [XmlAttributeAttribute(Form = System.Xml.Schema.XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
         public string? type { get; set; }
 
         [XmlTextAttribute()]
@@ -1496,7 +1572,7 @@ namespace ncea.mapper.Models
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
     public partial class MD_MetadataIdentificationInfoMD_DataIdentificationExtentEX_ExtentVerticalElementEX_VerticalExtentVerticalCRS
     {
-        [XmlAttributeAttribute(Form = System.Xml.Schema.XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
         public string? href { get; set; }
     }
 
@@ -1556,10 +1632,8 @@ namespace ncea.mapper.Models
     [SerializableAttribute()]
     [DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
-    public partial class MD_MetadataDistributionInfoMD_DistributionDistributionFormatMD_FormatName
+    public partial class MD_MetadataDistributionInfoMD_DistributionDistributionFormatMD_FormatName : CharacterStringBase
     {
-        [XmlElementAttribute(Namespace = "http://www.isotc211.org/2005/gco")]
-        public string CharacterString { get; set; }
     }
 
     [SerializableAttribute()]
@@ -1567,7 +1641,7 @@ namespace ncea.mapper.Models
     [XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.isotc211.org/2005/gmd")]
     public partial class MD_MetadataDistributionInfoMD_DistributionDistributionFormatMD_FormatVersion
     {
-        [XmlAttributeAttribute(Form = System.Xml.Schema.XmlSchemaForm.Qualified, Namespace = "http://www.isotc211.org/2005/gco")]
+        [XmlAttributeAttribute(Form = XmlSchemaForm.Qualified, Namespace = "http://www.isotc211.org/2005/gco")]
         public string nilReason { get; set; }
     }
 

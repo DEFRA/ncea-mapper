@@ -7,78 +7,78 @@ namespace ncea.mapper.Models
     public class MdcMdMetadata: Gemini23MdMetadata
     {
         [XmlElement(ElementName = "nceaClassifierInfo", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaClassifierInfo? nceaClassifierInfo { get; set; }
+        public NceaClassifierInfo? nceaClassifierInfo { get; set; }
 
         [XmlElement(ElementName = "nceaIdentifiers", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaIdentifiers? nceaIdentifiers { get; set; }
+        public NceaIdentifiers? nceaIdentifiers { get; set; }
 
         [XmlAttribute(AttributeName = "mdc", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/")]
         public string? mdc { get; set; }
     }
 
     [XmlRoot(ElementName = "nceaClassifierInfo", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaClassifierInfo
+    public partial class NceaClassifierInfo
     {
         [XmlArrayItemAttribute("classifier", IsNullable = false, Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaClassifierInfoClassifier[]? NC_Classifiers { get; set; }
+        public NceaClassifierInfoClassifier[]? NC_Classifiers { get; set; }
     }
 
     [XmlRoot(ElementName = "Classifier", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaClassifierInfoClassifier
+    public partial class NceaClassifierInfoClassifier
     {
         [XmlElement(ElementName = "ClassifierType", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaClassifierInfoClassifierClassifierType? classifierType { get; set; }
+        public NceaClassifierInfoClassifierClassifierType? classifierType { get; set; }
         [XmlElement(ElementName = "ClassifierValue", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaClassifierInfoClassifierClassifierValue? classifierValue { get; set; }
+        public NceaClassifierInfoClassifierClassifierValue? classifierValue { get; set; }
     }
 
     [XmlRoot(ElementName = "ClassifierType", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaClassifierInfoClassifierClassifierType : CharacterStringBase
+    public partial class NceaClassifierInfoClassifierClassifierType : CharacterStringBase
     {
     }
 
     [XmlRoot(ElementName = "ClassifierValue", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaClassifierInfoClassifierClassifierValue : CharacterStringBase
+    public partial class NceaClassifierInfoClassifierClassifierValue : CharacterStringBase
     {
     }
 
     [XmlRoot(ElementName = "nceaIdentifiers", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaIdentifiers
+    public partial class NceaIdentifiers
     {
         [XmlElement(ElementName = "ProjectID", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaIdentifiersProjectID? ProjectID { get; set; }
+        public NceaIdentifiersProjectId? ProjectID { get; set; }
         [XmlElement(ElementName = "MasterReferenceID", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaIdentifiersMasterReferenceID? MasterReferenceID { get; set; }
+        public NceaIdentifiersMasterReferenceID? MasterReferenceID { get; set; }
     }
 
     [XmlRoot(ElementName = "ProjectID", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaIdentifiersProjectID
+    public partial class NceaIdentifiersProjectId
     {
         [XmlElement(ElementName = "projectID", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaIdentifiersProjectIDProjectID? projectID { get; set; }
+        public NceaIdentifiersProjectIdProjectId? projectID { get; set; }
     }
 
     [XmlRoot(ElementName = "projectID", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaIdentifiersProjectIDProjectID : CharacterStringBase
+    public partial class NceaIdentifiersProjectIdProjectId : CharacterStringBase
     {
     }
 
     [XmlRoot(ElementName = "MasterReferenceID", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaIdentifiersMasterReferenceID
+    public partial class NceaIdentifiersMasterReferenceID
     {
         [XmlElement(ElementName = "catalogueEntry", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaIdentifiersMasterReferenceIDCatalogueEntry? catalogueEntry { get; set; }
+        public NceaIdentifiersMasterReferenceIDCatalogueEntry? catalogueEntry { get; set; }
         [XmlElement(ElementName = "sourceSystemReferenceID", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public nceaIdentifiersMasterReferenceIDSourceSystemReferenceID? sourceSystemReferenceID { get; set; }
+        public NceaIdentifiersMasterReferenceIdSourceSystemReferenceId? sourceSystemReferenceID { get; set; }
     }
 
     [XmlRoot(ElementName = "CatalogueEntry", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaIdentifiersMasterReferenceIDCatalogueEntry : CharacterStringBase
+    public partial class NceaIdentifiersMasterReferenceIDCatalogueEntry : CharacterStringBase
     {
     }
 
     [XmlRoot(ElementName = "sourceSystemReferenceID", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class nceaIdentifiersMasterReferenceIDSourceSystemReferenceID : CharacterStringBase
+    public partial class NceaIdentifiersMasterReferenceIdSourceSystemReferenceId : CharacterStringBase
     {
     }
 }

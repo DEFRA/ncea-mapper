@@ -24,35 +24,35 @@ public class MedinMapper : IMapperService
         var mdc_Metadata = _mapper.Map<MdcMdMetadata>(gemini2_3_Metadata);
 
         //Populate MDC classifier fields
-        var fileIdentifier = mdc_Metadata.FileIdentifier?.CharacterString;
+        var fileIdentifier = mdc_Metadata.FileIdentifier.CharacterString;
         mdc_Metadata.nceaIdentifiers = CreateNceaIdentifiersNode(fileIdentifier!);
         mdc_Metadata.nceaClassifierInfo = CreateNceaClassifierInfoNode();
 
         //Serialize MDC metadata object to XML string
-        var mdcMetadataString = mdc_Metadata?.Serialize();
+        var mdcMetadataString = mdc_Metadata.Serialize();
         _logger.LogInformation("Mapping completed for DataSource: Medin, FileIdentifier: {fileIdentifier}", fileIdentifier);
         
         return await Task.FromResult(mdcMetadataString!);
     }
 
-    private static nceaClassifierInfo CreateNceaClassifierInfoNode()
+    private static NceaClassifierInfo CreateNceaClassifierInfoNode()
     {       
-        return new nceaClassifierInfo() { NC_Classifiers = [] };
+        return new NceaClassifierInfo() { NC_Classifiers = [] };
     }
 
-    private static nceaIdentifiers CreateNceaIdentifiersNode(string fileIdentifier)
+    private static NceaIdentifiers CreateNceaIdentifiersNode(string fileIdentifier)
     {
         var dataSource = Convert.ToString(ProcessorType.Medin);
         var nceaRefValue = string.Concat(dataSource, "_", fileIdentifier);
-        return new nceaIdentifiers()
+        return new NceaIdentifiers()
                     {
-                        MasterReferenceID = new nceaIdentifiersMasterReferenceID()
+                        MasterReferenceID = new NceaIdentifiersMasterReferenceID()
                         {
-                            catalogueEntry = new nceaIdentifiersMasterReferenceIDCatalogueEntry() 
+                            catalogueEntry = new NceaIdentifiersMasterReferenceIDCatalogueEntry() 
                             { 
                                 CharacterString = nceaRefValue
                             },
-                            sourceSystemReferenceID = new nceaIdentifiersMasterReferenceIDSourceSystemReferenceID() 
+                            sourceSystemReferenceID = new NceaIdentifiersMasterReferenceIdSourceSystemReferenceId() 
                             { 
                                 CharacterString = nceaRefValue
                             }

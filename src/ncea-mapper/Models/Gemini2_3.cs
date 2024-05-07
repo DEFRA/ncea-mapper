@@ -43,8 +43,6 @@ namespace ncea.mapper.Models
         public string Xlink { get; set; }
         [XmlAttribute(AttributeName = "gts", Namespace = "http://www.w3.org/2000/xmlns/")]
         public string Gts { get; set; }
-        [XmlAttribute(AttributeName = "xsi", Namespace = "http://www.w3.org/2000/xmlns/")]
-        public string Xsi { get; set; }
         [XmlAttribute(AttributeName = "srv", Namespace = "http://www.w3.org/2000/xmlns/")]
         public string Srv { get; set; }
         [XmlAttribute(AttributeName = "gmx", Namespace = "http://www.w3.org/2000/xmlns/")]

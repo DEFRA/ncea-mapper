@@ -24,7 +24,7 @@ public class MedinMapper : IMapperService
         var mdc_Metadata = _mapper.Map<Mdc_MD_Metadata>(gemini2_3_Metadata);
 
         //Populate MDC classifier fields
-        var fileIdentifier = mdc_Metadata.fileIdentifier?.CharacterString;
+        var fileIdentifier = mdc_Metadata.FileIdentifier?.CharacterString;
         mdc_Metadata.nceaIdentifiers = CreateNceaIdentifiersNode(fileIdentifier!);
         mdc_Metadata.nceaClassifierInfo = CreateNceaClassifierInfoNode();
 

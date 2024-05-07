@@ -46,9 +46,9 @@ public class MedinMapper : IMapperService
         var nceaRefValue = string.Concat(dataSource, "_", fileIdentifier);
         return new NceaIdentifiers()
                     {
-                        MasterReferenceID = new NceaIdentifiersMasterReferenceID()
+                        MasterReferenceID = new NceaIdentifiersMasterReferenceId()
                         {
-                            catalogueEntry = new NceaIdentifiersMasterReferenceIDCatalogueEntry() 
+                            catalogueEntry = new NceaIdentifiersMasterReferenceIdCatalogueEntry() 
                             { 
                                 CharacterString = nceaRefValue
                             },

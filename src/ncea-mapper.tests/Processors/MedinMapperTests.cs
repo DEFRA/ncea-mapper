@@ -76,14 +76,16 @@ public class MedinMapperTests
 
 
         // Act
-        await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
+        var mdcMetadataStr = await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
         var gemini23Metadata = messageBody.Deserialize<Gemini23MdMetadata>();
-        var mdcMetadata = messageBody.Deserialize<MdcMdMetadata>();
+        var mdcMetadata = mdcMetadataStr.Deserialize<MdcMdMetadata>();
 
         // Assert
         Assert.Equal(gemini23Metadata?.MetadataStandardVersion.CharacterString, mdcMetadata?.MetadataStandardVersion.CharacterString);
         Assert.Equal(gemini23Metadata?.MetadataStandardName.CharacterString, mdcMetadata?.MetadataStandardName.CharacterString);
         Assert.Equal(gemini23Metadata?.Language.LanguageCode.CodeListValue, mdcMetadata?.Language.LanguageCode.CodeListValue);
+        Assert.True(mdcMetadata?.nceaClassifierInfo != null);
+        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.ToLower().StartsWith("medin"));
     }
 
     [Fact]
@@ -114,13 +116,15 @@ public class MedinMapperTests
         // Act        
         var mdcMetadataStr = await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
         var gemini23Metadata = messageBody.Deserialize<Gemini23MdMetadata>();
-        var mdcMetadata = messageBody.Deserialize<MdcMdMetadata>();
+        var mdcMetadata = mdcMetadataStr.Deserialize<MdcMdMetadata>();
 
 
         // Assert
         Assert.Equal(gemini23Metadata?.MetadataStandardVersion.CharacterString, mdcMetadata?.MetadataStandardVersion.CharacterString);
         Assert.Equal(gemini23Metadata?.MetadataStandardName.CharacterString, mdcMetadata?.MetadataStandardName.CharacterString);
         Assert.Equal(gemini23Metadata?.Language.LanguageCode.CodeListValue, mdcMetadata?.Language.LanguageCode.CodeListValue);
+        Assert.True(mdcMetadata?.nceaClassifierInfo != null);
+        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.ToLower().StartsWith("medin"));
     }
 
     [Fact]
@@ -149,13 +153,15 @@ public class MedinMapperTests
 
 
         // Act
-        await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
+        var mdcMetadataStr = await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
         var gemini23Metadata = messageBody.Deserialize<Gemini23MdMetadata>();
-        var mdcMetadata = messageBody.Deserialize<MdcMdMetadata>();
+        var mdcMetadata = mdcMetadataStr.Deserialize<MdcMdMetadata>();
 
 
         // Assert
         Assert.Equal(gemini23Metadata?.IdentificationInfo.SV_ServiceIdentification.ServiceType.LocalName.Text, mdcMetadata?.IdentificationInfo.SV_ServiceIdentification.ServiceType.LocalName.Text);
         Assert.Equal(gemini23Metadata?.IdentificationInfo.SV_ServiceIdentification.OperatesOn[0].Title, mdcMetadata?.IdentificationInfo.SV_ServiceIdentification.OperatesOn[0].Title);
+        Assert.True(mdcMetadata?.nceaClassifierInfo != null);
+        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.ToLower().StartsWith("medin"));
     }
 }

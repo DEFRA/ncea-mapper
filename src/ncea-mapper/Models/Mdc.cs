@@ -26,19 +26,19 @@ namespace Ncea.Mapper.Models
     [XmlRoot(ElementName = "Classifier", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
     public partial class NceaClassifierInfoClassifier
     {
-        [XmlElement(ElementName = "ClassifierType", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public NceaClassifierInfoClassifierClassifierType classifierType { get; set; }
-        [XmlElement(ElementName = "ClassifierValue", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-        public NceaClassifierInfoClassifierClassifierValue classifierValue { get; set; }
+        [XmlElement(ElementName = "name", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
+        public NceaClassifierInfoClassifierName name { get; set; }
+        [XmlElement(ElementName = "code", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
+        public NceaClassifierInfoClassifierCode code { get; set; }
     }
 
-    [XmlRoot(ElementName = "ClassifierType", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class NceaClassifierInfoClassifierClassifierType : CharacterStringBase
+    [XmlRoot(ElementName = "name", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
+    public partial class NceaClassifierInfoClassifierName : CharacterStringBase
     {
     }
 
-    [XmlRoot(ElementName = "ClassifierValue", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
-    public partial class NceaClassifierInfoClassifierClassifierValue : CharacterStringBase
+    [XmlRoot(ElementName = "code", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139.mdc/src/main/plugin/iso19139.mdc/schema/mdc")]
+    public partial class NceaClassifierInfoClassifierCode : CharacterStringBase
     {
     }
 

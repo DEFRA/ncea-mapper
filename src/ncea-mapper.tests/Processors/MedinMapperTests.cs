@@ -5,12 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using ncea.mapper.AutoMapper;
-using ncea.mapper.Processor;
+using ncea.mapper.Extensions;
 using ncea.mapper.Processor.Contracts;
+using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors;
 using Ncea.Mapper.Tests.Clients;
-using System.Reflection;
-using System.Xml.Linq;
+using System.Xml;
 
 namespace Ncea.Mapper.Tests.Processors;
 
@@ -47,5 +47,115 @@ public class MedinMapperTests
             It.IsAny<It.IsAnyType>(),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Process_ValidateMdcFields_For_Medin_Dataset_Metadata()
+    {
+        //Arrange
+        var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
+        OrchestrationServiceForTests.Get(out IConfiguration configuration,
+                            out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
+                            out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
+                            out Mock<IOrchestrationService> mockOrchestrationService,
+                            out Mock<ILogger<MedinMapper>> loggerMock,
+                            out Mock<ServiceBusSender> mockServiceBusSender,
+                            out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+
+        //Create Auto mapper object
+        var mappingProfile = new MappingProfile();
+        var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        var mapper = new AutoMapper.Mapper(mappingConfig);
+
+        var medinService = new MedinMapper(loggerMock.Object, mapper);
+
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_dataset_v3_1_2_example.xml");
+        var xDoc = new XmlDocument();
+        xDoc.Load(filePath);
+        var messageBody = xDoc.InnerXml;
+
+
+        // Act
+        await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
+        var gemini23Metadata = messageBody.Deserialize<Gemini23MdMetadata>();
+        var mdcMetadata = messageBody.Deserialize<MdcMdMetadata>();
+
+        // Assert
+        Assert.Equal(gemini23Metadata?.MetadataStandardVersion.CharacterString, mdcMetadata?.MetadataStandardVersion.CharacterString);
+        Assert.Equal(gemini23Metadata?.MetadataStandardName.CharacterString, mdcMetadata?.MetadataStandardName.CharacterString);
+        Assert.Equal(gemini23Metadata?.Language.LanguageCode.CodeListValue, mdcMetadata?.Language.LanguageCode.CodeListValue);
+    }
+
+    [Fact]
+    public async Task Process_ValidateMdcFields_For_Medin_Series_Metadata()
+    {
+        //Arrange
+        var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
+        OrchestrationServiceForTests.Get(out IConfiguration configuration,
+                            out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
+                            out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
+                            out Mock<IOrchestrationService> mockOrchestrationService,
+                            out Mock<ILogger<MedinMapper>> loggerMock,
+                            out Mock<ServiceBusSender> mockServiceBusSender,
+                            out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+
+        //Create Auto mapper object
+        var mappingProfile = new MappingProfile();
+        var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        var mapper = new AutoMapper.Mapper(mappingConfig);
+
+        var medinService = new MedinMapper(loggerMock.Object, mapper);
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_series_v3_1_2_example.xml");
+        var xDoc = new XmlDocument();
+        xDoc.Load(filePath);
+        var messageBody = xDoc.InnerXml;
+
+
+        // Act        
+        var mdcMetadataStr = await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
+        var gemini23Metadata = messageBody.Deserialize<Gemini23MdMetadata>();
+        var mdcMetadata = messageBody.Deserialize<MdcMdMetadata>();
+
+
+        // Assert
+        Assert.Equal(gemini23Metadata?.MetadataStandardVersion.CharacterString, mdcMetadata?.MetadataStandardVersion.CharacterString);
+        Assert.Equal(gemini23Metadata?.MetadataStandardName.CharacterString, mdcMetadata?.MetadataStandardName.CharacterString);
+        Assert.Equal(gemini23Metadata?.Language.LanguageCode.CodeListValue, mdcMetadata?.Language.LanguageCode.CodeListValue);
+    }
+
+    [Fact]
+    public async Task Process_ValidateMdcFields_For_Medin_Service_Metadata()
+    {
+        //Arrange
+        var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
+        OrchestrationServiceForTests.Get(out IConfiguration configuration,
+                            out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
+                            out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
+                            out Mock<IOrchestrationService> mockOrchestrationService,
+                            out Mock<ILogger<MedinMapper>> loggerMock,
+                            out Mock<ServiceBusSender> mockServiceBusSender,
+                            out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+
+        //Create Auto mapper object
+        var mappingProfile = new MappingProfile();
+        var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        var mapper = new AutoMapper.Mapper(mappingConfig);
+
+        var medinService = new MedinMapper(loggerMock.Object, mapper);
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_srv_v3_1_2_example.xml");
+        var xDoc = new XmlDocument();
+        xDoc.Load(filePath);
+        var messageBody = xDoc.InnerXml;
+
+
+        // Act
+        await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
+        var gemini23Metadata = messageBody.Deserialize<Gemini23MdMetadata>();
+        var mdcMetadata = messageBody.Deserialize<MdcMdMetadata>();
+
+
+        // Assert
+        Assert.Equal(gemini23Metadata?.IdentificationInfo.SV_ServiceIdentification.ServiceType.LocalName.Text, mdcMetadata?.IdentificationInfo.SV_ServiceIdentification.ServiceType.LocalName.Text);
+        Assert.Equal(gemini23Metadata?.IdentificationInfo.SV_ServiceIdentification.OperatesOn[0].Title, mdcMetadata?.IdentificationInfo.SV_ServiceIdentification.OperatesOn[0].Title);
     }
 }

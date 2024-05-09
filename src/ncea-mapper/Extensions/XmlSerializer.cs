@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace ncea.mapper.Extensions
 {
-    internal static class Serializer
+    public static class Serializer
     {
         public static T? Deserialize<T>(this string value)
         {

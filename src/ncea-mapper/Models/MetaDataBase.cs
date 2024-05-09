@@ -1,7 +1,6 @@
-﻿using System.ComponentModel;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
-namespace ncea.mapper.Models
+namespace Ncea.Mapper.Models
 {
     public class CharacterStringBase
     {

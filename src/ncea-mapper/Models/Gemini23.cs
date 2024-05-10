@@ -647,11 +647,11 @@ namespace Ncea.Mapper.Models
     public class EX_Extent
     {
         [XmlElement(ElementName = "geographicElement", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public List<GeographicElement> GeographicElement { get; set; }
+        public List<GeographicElement> GeographicElements { get; set; }
         [XmlElement(ElementName = "temporalElement", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public TemporalElement TemporalElement { get; set; }
+        public List<TemporalElement> TemporalElements { get; set; }
         [XmlElement(ElementName = "verticalElement", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public VerticalElement VerticalElement { get; set; }
+        public List<VerticalElement> VerticalElements { get; set; }
     }
 
     [XmlRoot(ElementName = "extent", Namespace = "http://www.isotc211.org/2005/srv")]
@@ -1218,7 +1218,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "resourceConstraints", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<ResourceConstraints> ResourceConstraints { get; set; }
         [XmlElement(ElementName = "spatialRepresentationType", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public SpatialRepresentationType SpatialRepresentationType { get; set; }
+        public List<SpatialRepresentationType> SpatialRepresentationTypes { get; set; }
         [XmlElement(ElementName = "spatialResolution", Namespace = "http://www.isotc211.org/2005/gmd")]
         public SpatialResolution SpatialResolution { get; set; }
         [XmlElement(ElementName = "language", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1228,7 +1228,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "extent", Namespace = "http://www.isotc211.org/2005/gmd")]
         public Extent Extent { get; set; }
         [XmlElement(ElementName = "characterSet", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public CharacterSet CharacterSet { get; set; }
+        public List<CharacterSet> CharacterSets { get; set; }
         [XmlElement(ElementName = "supplementalInformation", Namespace = "http://www.isotc211.org/2005/gmd")]
         public SupplementalInformation SupplementalInformation { get; set; }
         [XmlAttribute(AttributeName = "id")]
@@ -1549,7 +1549,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "valueUnit", Namespace = "http://www.isotc211.org/2005/gmd")]
         public ValueUnit ValueUnit { get; set; }
         [XmlElement(ElementName = "value", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Value Value { get; set; }
+        public List<Value> Value { get; set; }
     }
 
     [XmlRoot(ElementName = "DQ_TopologicalConsistency", Namespace = "http://www.isotc211.org/2005/gmd")]

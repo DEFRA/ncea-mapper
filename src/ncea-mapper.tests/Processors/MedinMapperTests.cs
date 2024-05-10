@@ -84,8 +84,8 @@ public class MedinMapperTests
         Assert.Equal(gemini23Metadata?.MetadataStandardVersion.CharacterString, mdcMetadata?.MetadataStandardVersion.CharacterString);
         Assert.Equal(gemini23Metadata?.MetadataStandardName.CharacterString, mdcMetadata?.MetadataStandardName.CharacterString);
         Assert.Equal(gemini23Metadata?.Language.LanguageCode.CodeListValue, mdcMetadata?.Language.LanguageCode.CodeListValue);
-        Assert.True(mdcMetadata?.nceaClassifierInfo != null);
-        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.ToLower().StartsWith("medin"));
+        Assert.NotNull(mdcMetadata?.nceaClassifierInfo);
+        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.StartsWith("medin", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -123,8 +123,8 @@ public class MedinMapperTests
         Assert.Equal(gemini23Metadata?.MetadataStandardVersion.CharacterString, mdcMetadata?.MetadataStandardVersion.CharacterString);
         Assert.Equal(gemini23Metadata?.MetadataStandardName.CharacterString, mdcMetadata?.MetadataStandardName.CharacterString);
         Assert.Equal(gemini23Metadata?.Language.LanguageCode.CodeListValue, mdcMetadata?.Language.LanguageCode.CodeListValue);
-        Assert.True(mdcMetadata?.nceaClassifierInfo != null);
-        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.ToLower().StartsWith("medin"));
+        Assert.NotNull(mdcMetadata?.nceaClassifierInfo);
+        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.StartsWith("medin", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public class MedinMapperTests
         // Assert
         Assert.Equal(gemini23Metadata?.IdentificationInfo.SV_ServiceIdentification.ServiceType.LocalName.Text, mdcMetadata?.IdentificationInfo.SV_ServiceIdentification.ServiceType.LocalName.Text);
         Assert.Equal(gemini23Metadata?.IdentificationInfo.SV_ServiceIdentification.OperatesOn[0].Title, mdcMetadata?.IdentificationInfo.SV_ServiceIdentification.OperatesOn[0].Title);
-        Assert.True(mdcMetadata?.nceaClassifierInfo != null);
-        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.ToLower().StartsWith("medin"));
+        Assert.NotNull(mdcMetadata?.nceaClassifierInfo);
+        Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.StartsWith("medin", StringComparison.OrdinalIgnoreCase));
     }
 }

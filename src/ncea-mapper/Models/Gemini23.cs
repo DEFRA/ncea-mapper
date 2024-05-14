@@ -224,6 +224,9 @@ namespace Ncea.Mapper.Models
     {
         [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
         public string CharacterString { get; set; }
+
+        [XmlElement(ElementName = "Anchor", Namespace = "http://www.isotc211.org/2005/gmx")]
+        public Anchor anchor { get; set; }
     }
 
     [XmlRoot(ElementName = "metadataStandardVersion", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -284,7 +287,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "title", Namespace = "http://www.isotc211.org/2005/gmd")]
         public Title Title { get; set; }
         [XmlElement(ElementName = "date", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Date Date { get; set; }
+        public List<Date> Date { get; set; }
         [XmlElement(ElementName = "identifier", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<Identifier> Identifier { get; set; }
         [XmlElement(ElementName = "alternateTitle", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -303,10 +306,15 @@ namespace Ncea.Mapper.Models
     {
         [XmlAttribute(AttributeName = "href", Namespace = "http://www.w3.org/1999/xlink")]
         public string Href { get; set; }
+
         [XmlText]
         public string Text { get; set; }
+
         [XmlAttribute(AttributeName = "title", Namespace = "http://www.w3.org/1999/xlink")]
         public string Title { get; set; }
+
+        [XmlAttribute(AttributeName = "type", Namespace = "http://www.w3.org/1999/xlink")]
+        public string Type { get; set; }
     }
 
     [XmlRoot(ElementName = "code", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -355,8 +363,13 @@ namespace Ncea.Mapper.Models
     {
         [XmlElement(ElementName = "code", Namespace = "http://www.isotc211.org/2005/gmd")]
         public Code Code { get; set; }
+
         [XmlElement(ElementName = "authority", Namespace = "http://www.isotc211.org/2005/gmd")]
         public Authority Authority { get; set; }
+
+        [XmlElement(ElementName = "codeSpace", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public CodeSpace CodeSpace { get; set; }
+
         [XmlAttribute(AttributeName = "id")]
         public string Id { get; set; }
     }
@@ -736,6 +749,9 @@ namespace Ncea.Mapper.Models
     [XmlRoot(ElementName = "name", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class Name
     {
+        [XmlElement(ElementName = "Anchor", Namespace = "http://www.isotc211.org/2005/gmx")]
+        public Anchor Anchor { get; set; }
+
         [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
         public string CharacterString { get; set; }
     }
@@ -743,10 +759,11 @@ namespace Ncea.Mapper.Models
     [XmlRoot(ElementName = "version", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class Version
     {
-        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
-        public string CharacterString { get; set; }
         [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
         public string NilReason { get; set; }
+
+        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string CharacterString { get; set; }
     }
 
     [XmlRoot(ElementName = "MD_Format", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1179,11 +1196,32 @@ namespace Ncea.Mapper.Models
         public MD_RepresentativeFraction MD_RepresentativeFraction { get; set; }
     }
 
+    [XmlRoot(ElementName = "Distance", Namespace = "http://www.isotc211.org/2005/gco")]
+    public class Distance
+    {
+        [XmlAttribute(AttributeName = "uom")]
+        public string Uom { get; set; }
+        [XmlText]
+        public string Text { get; set; }
+    }
+
+    [XmlRoot(ElementName = "distance", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class distance
+    {
+        [XmlElement(ElementName = "Distance", Namespace = "http://www.isotc211.org/2005/gco")]
+        public Distance Distance { get; set; }
+        [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string NilReason { get; set; }
+    }
+
     [XmlRoot(ElementName = "MD_Resolution", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class MD_Resolution
     {
         [XmlElement(ElementName = "equivalentScale", Namespace = "http://www.isotc211.org/2005/gmd")]
         public EquivalentScale EquivalentScale { get; set; }
+
+        [XmlElement(ElementName = "distance", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public distance distance { get; set; }
     }
 
     [XmlRoot(ElementName = "spatialResolution", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1390,6 +1428,9 @@ namespace Ncea.Mapper.Models
     {
         [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
         public string NilReason { get; set; }
+
+        [XmlElement(ElementName = "Real", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string Real { get; set; }
     }
 
     [XmlRoot(ElementName = "maximumValue", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1397,6 +1438,16 @@ namespace Ncea.Mapper.Models
     {
         [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
         public string NilReason { get; set; }
+
+        [XmlElement(ElementName = "Real", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string Real { get; set; }
+    }
+
+    [XmlRoot(ElementName = "verticalCRS", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class VerticalCRS
+    {
+        [XmlAttribute(AttributeName = "href", Namespace = "http://www.w3.org/1999/xlink")]
+        public string Href { get; set; }
     }
 
     [XmlRoot(ElementName = "EX_VerticalExtent", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1407,7 +1458,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "maximumValue", Namespace = "http://www.isotc211.org/2005/gmd")]
         public MaximumValue MaximumValue { get; set; }
         [XmlElement(ElementName = "verticalCRS", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public string VerticalCRS { get; set; }
+        public VerticalCRS VerticalCRS { get; set; }
     }
 
     [XmlRoot(ElementName = "verticalElement", Namespace = "http://www.isotc211.org/2005/gmd")]

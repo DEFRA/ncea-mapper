@@ -38,7 +38,7 @@ await ConfigureServiceBusQueue(configuration, builder);
 ConfigureServices(builder);
 
 var host = builder.Build();
-host.Run();
+await host.RunAsync();
 
 static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, HostApplicationBuilder builder)
 {

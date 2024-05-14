@@ -14,6 +14,7 @@ using ncea.mapper.Processor;
 using ncea.mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using ncea.mapper.AutoMapper;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -28,6 +29,8 @@ builder.Services.AddHealthChecks().AddCheck<HealthCheck>("custom_hc");
 builder.Services.AddHostedService<TcpHealthProbeService>();
 
 builder.Services.AddHttpClient();
+// Add AutoMapper with a custom mapping profile
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 ConfigureKeyVault(configuration, builder);
 ConfigureLogging(builder);
@@ -35,7 +38,7 @@ await ConfigureServiceBusQueue(configuration, builder);
 ConfigureServices(builder);
 
 var host = builder.Build();
-host.Run();
+await host.RunAsync();
 
 static async Task ConfigureServiceBusQueue(IConfigurationRoot configuration, HostApplicationBuilder builder)
 {

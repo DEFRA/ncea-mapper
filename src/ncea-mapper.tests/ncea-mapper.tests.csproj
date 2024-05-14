@@ -28,4 +28,19 @@
     <ProjectReference Include="..\ncea-mapper\ncea-mapper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\MEDIN_Metadata_dataset_v3_1_2_example.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\MEDIN_Metadata_series_v3_1_2_example.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\MEDIN_Metadata_srv_v3_1_2_example.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\JNCC_Metadata.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

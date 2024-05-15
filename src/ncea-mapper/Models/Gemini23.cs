@@ -1207,11 +1207,14 @@ namespace Ncea.Mapper.Models
         public MD_RepresentativeFraction MD_RepresentativeFraction { get; set; }
     }
 
+    [XmlTypeAttribute(Namespace = "http://www.opengis.net/gml/3.2", AnonymousType = true)]
     [XmlRoot(ElementName = "Distance", Namespace = "http://www.isotc211.org/2005/gco")]
     public class Distance
     {
         [XmlAttribute(AttributeName = "uom")]
         public string Uom { get; set; }
+        [XmlAttribute(AttributeName = "type", Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
+        public string Type { get; set; }
         [XmlText]
         public string Text { get; set; }
     }

@@ -29,7 +29,6 @@ public class JnccMapper : IMapperService
         mdc_Metadata.nceaClassifierInfo = CreateNceaClassifierInfoNode();
 
         //Serialize MDC metadata object to XML string
-        
         var nameSpaces = new XmlSerializerNamespaces();
         nameSpaces.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
         nameSpaces.Add("xsd", "http://www.w3.org/2001/XMLSchema");

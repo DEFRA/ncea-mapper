@@ -3,6 +3,7 @@ using ncea.mapper.Extensions;
 using Ncea.Mapper.Constants;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
+using System.Xml.Serialization;
 
 namespace Ncea.Mapper.Processors;
 
@@ -28,7 +29,12 @@ public class MedinMapper : IMapperService
         mdc_Metadata.nceaClassifierInfo = CreateNceaClassifierInfoNode();
 
         //Serialize MDC metadata object to XML string
-        var mdcMetadataString = mdc_Metadata.Serialize();
+        var nameSpaces = new XmlSerializerNamespaces();
+        nameSpaces.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        nameSpaces.Add("xsd", "http://www.w3.org/2001/XMLSchema");
+        nameSpaces.Add("gmd", "http://www.isotc211.org/2005/gmd");
+        nameSpaces.Add("mdc", mdcSchemaLocation);
+        var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);
         _logger.LogInformation("Mapping completed for DataSource: Medin, FileIdentifier: {fileIdentifier}", fileIdentifier);
         
         return await Task.FromResult(mdcMetadataString!);

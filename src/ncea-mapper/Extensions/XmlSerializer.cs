@@ -17,7 +17,7 @@ namespace ncea.mapper.Extensions
             return (T?)xmlSerializer.Deserialize(new StringReader(value));
         }
 
-        public static string Serialize<T>(this T value)
+        public static string Serialize<T>(this T value, XmlSerializerNamespaces? namespaces = null)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
 
@@ -25,7 +25,7 @@ namespace ncea.mapper.Extensions
             {
                 using (var xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true }))
                 {
-                    xmlSerializer.Serialize(xmlWriter, value);
+                    xmlSerializer.Serialize(xmlWriter, value, namespaces);
                     return stringWriter.ToString();
                 }
             }

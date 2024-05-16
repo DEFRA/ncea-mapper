@@ -1207,7 +1207,7 @@ namespace Ncea.Mapper.Models
         public MD_RepresentativeFraction MD_RepresentativeFraction { get; set; }
     }
 
-    [XmlTypeAttribute(Namespace = "http://www.opengis.net/gml/3.2", AnonymousType = true)]
+    [XmlTypeAttribute(Namespace = "http://www.opengis.net/gml/3.2", TypeName = "LengthType")]
     [XmlRoot(ElementName = "Distance", Namespace = "http://www.isotc211.org/2005/gco")]
     public class Distance
     {

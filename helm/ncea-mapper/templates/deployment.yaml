@@ -1,0 +1,8 @@
+{{- include "adp-helm-library.deployment" (list . "ncea-mapper.deployment") -}}
+{{- define "ncea-mapper.deployment" -}}
+spec:
+  template:
+    spec:
+      containers:
+      - {{ include "adp-helm-library.container" (list . "ncea-mapper.container") }}
+{{- end -}}

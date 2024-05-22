@@ -2,23 +2,27 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
-using ncea.mapper.Processor.Contracts;
-using Ncea.Mapper.Constants;
+using Ncea.Mapper.Processor.Contracts;
+using Ncea.mapper.Infrastructure.Contracts;
+using Ncea.Mapper.Infrastructure.Models.Requests;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 
-namespace ncea.mapper.Processor;
+namespace Ncea.Mapper.Processor;
 
 public class OrchestrationService : IOrchestrationService
 {
     private const string ProcessorErrorMessage = "Error in processing message in ncea-mapper service";
+
     private readonly ServiceBusSender _sender;
+    private readonly IBlobService _blobService;
     private readonly ServiceBusProcessor _processor;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<OrchestrationService> _logger;
     private readonly string? _mdcSchemaLocation;
 
     public OrchestrationService(IConfiguration configuration,
+        IBlobService blobService,
         IAzureClientFactory<ServiceBusSender> serviceBusSenderFactory,
         IAzureClientFactory<ServiceBusProcessor> serviceBusProcessorFactory,
         IServiceProvider serviceProvider,
@@ -30,6 +34,7 @@ public class OrchestrationService : IOrchestrationService
 
         _processor = serviceBusProcessorFactory.CreateClient(harvesterQueueName);
         _sender = serviceBusSenderFactory.CreateClient(mapperQueueName);
+        _blobService = blobService;
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
@@ -41,11 +46,10 @@ public class OrchestrationService : IOrchestrationService
         await _processor.StartProcessingAsync(cancellationToken);
     }
 
-    private async Task SendMessageAsync(string message, string dataSource, CancellationToken cancellationToken = default)
+    private async Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
     {
         var messageInBytes = Encoding.UTF8.GetBytes(message);
         var serviceBusMessage = new ServiceBusMessage(messageInBytes);
-        serviceBusMessage.ApplicationProperties.Add("DataSource", dataSource);
         await _sender.SendMessageAsync(serviceBusMessage, cancellationToken);
     }
 
@@ -54,16 +58,21 @@ public class OrchestrationService : IOrchestrationService
         try
         {
             var body = Encoding.UTF8.GetString(args.Message.Body);
-            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecord>(body);
-
-            //var dataSource = args.Message.ApplicationProperties["DataSource"].ToString();
-            //var dataSourceName = Enum.Parse(typeof(ProcessorType), dataSource!, true).ToString();
+            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecordMessage>(body);
 
             var mdcMappedData = await _serviceProvider
                 .GetRequiredKeyedService<IMapperService>(harvestedRecord!.DataSource)
                 .Transform(_mdcSchemaLocation!, body);
-            
-            await SendMessageAsync(mdcMappedData, dataSource!);
+
+            var xmlStream = new MemoryStream(Encoding.UTF8.GetBytes(mdcMappedData));
+            var documentFileName = string.Concat(harvestedRecord.FileIdentifier, ".xml");
+
+            await _blobService.SaveAsync(new SaveBlobRequest(xmlStream, documentFileName, harvestedRecord.DataSource.ToString()), args.CancellationToken);
+
+            var mdcMappedRecord = new MdcMappedRecordMessage(harvestedRecord.FileIdentifier, harvestedRecord.DataSource);
+            var message = JsonSerializer.Serialize(mdcMappedRecord);
+
+            await SendMessageAsync(mdcMappedData);
 
             await args.CompleteMessageAsync(args.Message);
         }

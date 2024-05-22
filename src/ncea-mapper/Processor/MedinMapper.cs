@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ncea.mapper.Extensions;
-using Ncea.Mapper.Constants;
+using Ncea.Mapper.Enums;
+using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 using System.Xml.Serialization;
@@ -47,7 +47,7 @@ public class MedinMapper : IMapperService
 
     private static NceaIdentifiers CreateNceaIdentifiersNode(string fileIdentifier)
     {
-        var dataSource = Convert.ToString(ProcessorType.Medin);
+        var dataSource = Convert.ToString(DataSource.Medin);
         var nceaRefValue = string.Concat(dataSource, "_", fileIdentifier);
         return new NceaIdentifiers()
                     {

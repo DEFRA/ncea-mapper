@@ -1,6 +1,6 @@
 ﻿namespace Ncea.Mapper.Enums;
 
-public enum DataSourceName
+public enum DataSource
 {
     Medin,
     Jncc

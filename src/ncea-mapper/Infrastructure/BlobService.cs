@@ -24,4 +24,12 @@ public class BlobService : IBlobService
 
         return blobContents;
     }
+
+    public async Task<string> SaveAsync(SaveBlobRequest request, CancellationToken cancellationToken)
+    {
+        var blobContainer = _blobServiceClient.GetBlobContainerClient(request.Container);
+        var blobClient = blobContainer.GetBlobClient(request.FileName);
+        await blobClient.UploadAsync(request.Blob, true, cancellationToken);
+        return blobClient.Uri.AbsoluteUri;
+    }
 }

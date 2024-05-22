@@ -1,6 +1,6 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
-using ncea.mapper.Processor.Contracts;
+using Ncea.Mapper.Processor.Contracts;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Ncea.Mapper;

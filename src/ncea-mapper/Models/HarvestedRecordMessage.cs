@@ -3,15 +3,7 @@ namespace Ncea.Mapper.Models;
 
 public class HarvestedRecordMessage
 {
-    public HarvestedRecordMessage(string fileIdentifier, DataFormat dataFormat, DataStandard dataStandard, DataSource dataSource)
-    {
-        FileIdentifier = fileIdentifier;
-        DataFormat = dataFormat;
-        DataStandard = dataStandard;
-        DataSource = dataSource;
-    }
-
-    public string FileIdentifier { get; set; }
+    public string FileIdentifier { get; set; } = null!;
     public DataFormat DataFormat { get; set; }
     public DataStandard DataStandard { get; set; }
     public DataSource DataSource { get; set; }

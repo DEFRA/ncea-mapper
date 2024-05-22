@@ -58,11 +58,14 @@ public class OrchestrationService : IOrchestrationService
         try
         {
             var body = Encoding.UTF8.GetString(args.Message.Body);
-            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecordMessage>(body);
+            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecordMessage>(body)!;
+
+            var request = new GetBlobContentRequest(harvestedRecord.FileIdentifier, harvestedRecord.DataSource.ToString());
+            var harvestedContent = await _blobService.GetContentAsync(request, args.CancellationToken);
 
             var mdcMappedData = await _serviceProvider
                 .GetRequiredKeyedService<IMapperService>(harvestedRecord!.DataSource)
-                .Transform(_mdcSchemaLocation!, body);
+                .Transform(_mdcSchemaLocation!, harvestedContent);
 
             var xmlStream = new MemoryStream(Encoding.UTF8.GetBytes(mdcMappedData));
             var documentFileName = string.Concat(harvestedRecord.FileIdentifier, ".xml");

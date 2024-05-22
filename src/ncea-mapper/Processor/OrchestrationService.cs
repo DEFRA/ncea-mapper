@@ -1,8 +1,10 @@
 ﻿using System.Text;
+using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
 using ncea.mapper.Processor.Contracts;
 using Ncea.Mapper.Constants;
+using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 
 namespace ncea.mapper.Processor;
@@ -51,10 +53,15 @@ public class OrchestrationService : IOrchestrationService
     {
         try
         {
-            var body = args.Message.Body.ToString();
-            var dataSource = args.Message.ApplicationProperties["DataSource"].ToString();
-            var dataSourceName = Enum.Parse(typeof(ProcessorType), dataSource!, true).ToString();
-            var mdcMappedData = await _serviceProvider.GetRequiredKeyedService<IMapperService>(dataSourceName).Transform(_mdcSchemaLocation!, body);
+            var body = Encoding.UTF8.GetString(args.Message.Body);
+            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecord>(body);
+
+            //var dataSource = args.Message.ApplicationProperties["DataSource"].ToString();
+            //var dataSourceName = Enum.Parse(typeof(ProcessorType), dataSource!, true).ToString();
+
+            var mdcMappedData = await _serviceProvider
+                .GetRequiredKeyedService<IMapperService>(harvestedRecord!.DataSource)
+                .Transform(_mdcSchemaLocation!, body);
             
             await SendMessageAsync(mdcMappedData, dataSource!);
 

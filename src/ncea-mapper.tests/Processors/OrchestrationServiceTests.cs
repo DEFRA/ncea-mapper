@@ -1,8 +1,12 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Azure.Storage.Blobs;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Ncea.Harvester.Tests.Clients;
+using Ncea.Mapper.Processor;
+using Ncea.Mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Ncea.Mapper.Tests.Clients;
 using ncea_mapper.tests.Clients;
@@ -23,8 +27,13 @@ public class OrchestrationServiceTests
                             out Mock<ILogger<OrchestrationService>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+
+        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
+                                              out Mock<BlobContainerClient> mockBlobContainerClient,
+                                              out Mock<BlobClient> mockBlobClient);
+
         var serviceProvider = new Mock<IServiceProvider>();
-        var service = new OrchestrationService(configuration, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, serviceProvider.Object, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, serviceProvider.Object, loggerMock.Object);
 
         // Act
         await service.StartProcessorAsync(It.IsAny<CancellationToken>());
@@ -44,10 +53,13 @@ public class OrchestrationServiceTests
                             out Mock<ILogger<OrchestrationService>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
+                                              out Mock<BlobContainerClient> mockBlobContainerClient,
+                                              out Mock<BlobClient> mockBlobClient);
         var mockServiceProvider = new Mock<IServiceProvider>();
 
         // Act
-        var service = new OrchestrationService(configuration, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
         await service.StartProcessorAsync(It.IsAny<CancellationToken>());
 
         // Assert        
@@ -65,9 +77,12 @@ public class OrchestrationServiceTests
                             out Mock<ILogger<OrchestrationService>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
+                                              out Mock<BlobContainerClient> mockBlobContainerClient,
+                                              out Mock<BlobClient> mockBlobClient);
         var mockServiceProvider = new Mock<IServiceProvider>();
 
-        var service = new OrchestrationService(configuration, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
         var args = new ProcessErrorEventArgs(new Exception("test-exception"), It.IsAny<ServiceBusErrorSource>(),
                                              It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
                                              It.IsAny<CancellationToken>());
@@ -100,6 +115,9 @@ public class OrchestrationServiceTests
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         LoggerForTests.Get<MedinMapper>(out Mock<ILogger<MedinMapper>> mockLogger);
+        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
+                                              out Mock<BlobContainerClient> mockBlobContainerClient,
+                                              out Mock<BlobClient> mockBlobClient);
 
         var serviceBusMessageProps = new Dictionary<string, object>
         {
@@ -115,7 +133,7 @@ public class OrchestrationServiceTests
 
 
         // Act
-        var service = new OrchestrationService(configuration, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
         var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
         if (task != null) await task;
@@ -136,6 +154,9 @@ public class OrchestrationServiceTests
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         LoggerForTests.Get<JnccMapper>(out Mock<ILogger<JnccMapper>> mockLogger);
+        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
+                                              out Mock<BlobContainerClient> mockBlobContainerClient,
+                                              out Mock<BlobClient> mockBlobClient);
 
         var serviceBusMessageProps = new Dictionary<string, object>
         {
@@ -151,7 +172,7 @@ public class OrchestrationServiceTests
 
 
         // Act
-        var service = new OrchestrationService(configuration, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
         var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
         if (task != null) await task;
@@ -171,6 +192,9 @@ public class OrchestrationServiceTests
                             out Mock<ILogger<OrchestrationService>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
+                                              out Mock<BlobContainerClient> mockBlobContainerClient,
+                                              out Mock<BlobClient> mockBlobClient);
 
         var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: null, messageId: "messageId");
         var mockReceiver = new Mock<ServiceBusReceiver>();
@@ -179,7 +203,7 @@ public class OrchestrationServiceTests
         mockProcessMessageEventArgs.Setup(x => x.AbandonMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<IDictionary<string, object>>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         var mockServiceProvider = new Mock<IServiceProvider>();
         // Act
-        var service = new OrchestrationService(configuration, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
         var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
         if (task != null) await task;
@@ -204,11 +228,14 @@ public class OrchestrationServiceTests
                             out Mock<ILogger<OrchestrationService>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
+                                              out Mock<BlobContainerClient> mockBlobContainerClient,
+                                              out Mock<BlobClient> mockBlobClient);
         var mockServiceProvider = new Mock<IServiceProvider>();
         
         
         // Act
-        var service = new OrchestrationService(configuration, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("SendMessageAsync", BindingFlags.NonPublic | BindingFlags.Instance);
         var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { "test-message", It.IsAny<string>(), It.IsAny<CancellationToken>() }));
         if (task != null) await task;

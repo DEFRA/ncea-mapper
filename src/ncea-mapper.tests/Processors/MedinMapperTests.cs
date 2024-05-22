@@ -2,13 +2,16 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Ncea.Mapper.AutoMapper;
 using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
+using Ncea.Mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Ncea.Mapper.Tests.Clients;
+using ncea_mapper.tests.Clients;
 using System.Xml;
 
 namespace Ncea.Mapper.Tests.Processors;
@@ -26,11 +29,13 @@ public class MedinMapperTests
                             out Mock<ILogger<MedinMapper>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var serviceProvider = ServiceProviderForTests.Get();
+        var mapper = serviceProvider.GetRequiredService<IMapper>();
 
-        //Create Auto mapper object
-        var mappingProfile = new MappingProfile();
-        var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
-        var mapper = new AutoMapper.Mapper(mappingConfig);
+        ////Create Auto mapper object
+        //var mappingProfile = new MappingProfile();
+        //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        //var mapper = new AutoMapper.Mapper(mappingConfig);
 
         var medinService = new MedinMapper(loggerMock.Object, mapper);
         var messageBody = "<?xml version=\"1.0\"?><gmd:MD_Metadata xmlns:gss=\"http://www.isotc211.org/2005/gss\" xmlns:gsr=\"http://www.isotc211.org/2005/gsr\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gts=\"http://www.isotc211.org/2005/gts\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\"><gmd:fileIdentifier>\r\n    <gco:CharacterString>test-field-identifier</gco:CharacterString>\r\n  </gmd:fileIdentifier></gmd:MD_Metadata>";
@@ -60,11 +65,13 @@ public class MedinMapperTests
                             out Mock<ILogger<MedinMapper>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var serviceProvider = ServiceProviderForTests.Get();
+        var mapper = serviceProvider.GetRequiredService<IMapper>();
 
         //Create Auto mapper object
-        var mappingProfile = new MappingProfile();
-        var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
-        var mapper = new AutoMapper.Mapper(mappingConfig);
+        //var mappingProfile = new MappingProfile();
+        //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        //var mapper = new AutoMapper.Mapper(mappingConfig);
 
         var medinService = new MedinMapper(loggerMock.Object, mapper);
 
@@ -99,18 +106,19 @@ public class MedinMapperTests
                             out Mock<ILogger<MedinMapper>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var serviceProvider = ServiceProviderForTests.Get();
+        var mapper = serviceProvider.GetRequiredService<IMapper>();
 
         //Create Auto mapper object
-        var mappingProfile = new MappingProfile();
-        var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
-        var mapper = new AutoMapper.Mapper(mappingConfig);
+        //var mappingProfile = new MappingProfile();
+        //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        //var mapper = new AutoMapper.Mapper(mappingConfig);
 
         var medinService = new MedinMapper(loggerMock.Object, mapper);
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_series_v3_1_2_example.xml");
         var xDoc = new XmlDocument();
         xDoc.Load(filePath);
         var messageBody = xDoc.InnerXml;
-
 
         // Act        
         var mdcMetadataStr = await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
@@ -138,11 +146,13 @@ public class MedinMapperTests
                             out Mock<ILogger<MedinMapper>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var serviceProvider = ServiceProviderForTests.Get();
+        var mapper = serviceProvider.GetRequiredService<IMapper>();
 
         //Create Auto mapper object
-        var mappingProfile = new MappingProfile();
-        var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
-        var mapper = new AutoMapper.Mapper(mappingConfig);
+        //var mappingProfile = new MappingProfile();
+        //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        //var mapper = new AutoMapper.Mapper(mappingConfig);
 
         var medinService = new MedinMapper(loggerMock.Object, mapper);
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_srv_v3_1_2_example.xml");

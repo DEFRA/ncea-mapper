@@ -7,6 +7,7 @@ using Ncea.mapper.Infrastructure.Contracts;
 using Ncea.Mapper.Infrastructure.Models.Requests;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
+using System.Text.Json.Serialization;
 
 namespace Ncea.Mapper.Processor;
 
@@ -55,25 +56,31 @@ public class OrchestrationService : IOrchestrationService
 
     private async Task ProcessMessagesAsync(ProcessMessageEventArgs args)
     {
+        var options = new JsonSerializerOptions
+        {
+            Converters = { new JsonStringEnumConverter() }
+        };
+
         try
         {
-            var body = Encoding.UTF8.GetString(args.Message.Body);
-            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecordMessage>(body)!;
+            var body = Encoding.UTF8.GetString(args.Message.Body);            
+            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecordMessage>(body, options)!;
+            var dataSource = harvestedRecord.DataSource.ToString().ToLowerInvariant();
 
-            var request = new GetBlobContentRequest(harvestedRecord.FileIdentifier, harvestedRecord.DataSource.ToString());
+            var request = new GetBlobContentRequest(harvestedRecord.FileIdentifier, dataSource);
             var harvestedContent = await _blobService.GetContentAsync(request, args.CancellationToken);
 
             var mdcMappedData = await _serviceProvider
-                .GetRequiredKeyedService<IMapperService>(harvestedRecord!.DataSource)
+                .GetRequiredKeyedService<IMapperService>(harvestedRecord!.DataSource.ToString())
                 .Transform(_mdcSchemaLocation!, harvestedContent);
 
             var xmlStream = new MemoryStream(Encoding.UTF8.GetBytes(mdcMappedData));
-            var documentFileName = string.Concat(harvestedRecord.FileIdentifier, ".xml");
+            var xmlFileName = string.Concat(harvestedRecord.FileIdentifier, ".xml");
 
-            await _blobService.SaveAsync(new SaveBlobRequest(xmlStream, documentFileName, harvestedRecord.DataSource.ToString()), args.CancellationToken);
+            await _blobService.SaveAsync(new SaveBlobRequest(xmlStream, xmlFileName, dataSource), args.CancellationToken);
 
             var mdcMappedRecord = new MdcMappedRecordMessage(harvestedRecord.FileIdentifier, harvestedRecord.DataSource);
-            var message = JsonSerializer.Serialize(mdcMappedRecord);
+            var message = JsonSerializer.Serialize(mdcMappedRecord, options);
 
             await SendMessageAsync(mdcMappedData);
 

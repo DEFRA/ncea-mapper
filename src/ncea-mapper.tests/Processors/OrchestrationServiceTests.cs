@@ -5,12 +5,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Ncea.Harvester.Tests.Clients;
+using Ncea.mapper.Infrastructure.Contracts;
+using Ncea.Mapper.Infrastructure.Models.Requests;
+using Ncea.Mapper.Models;
 using Ncea.Mapper.Processor;
 using Ncea.Mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Ncea.Mapper.Tests.Clients;
 using ncea_mapper.tests.Clients;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Ncea.Mapper.Tests.Processors;
 
@@ -77,9 +81,11 @@ public class OrchestrationServiceTests
                             out Mock<ILogger<OrchestrationService>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+
         var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
                                               out Mock<BlobContainerClient> mockBlobContainerClient,
                                               out Mock<BlobClient> mockBlobClient);
+
         var mockServiceProvider = new Mock<IServiceProvider>();
 
         var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
@@ -115,25 +121,27 @@ public class OrchestrationServiceTests
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         LoggerForTests.Get<MedinMapper>(out Mock<ILogger<MedinMapper>> mockLogger);
-        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
-                                              out Mock<BlobContainerClient> mockBlobContainerClient,
-                                              out Mock<BlobClient> mockBlobClient);
 
-        var serviceBusMessageProps = new Dictionary<string, object>
-        {
-            { "DataSource", "medin" }
-        };
-        var messageBody = "<?xml version=\"1.0\"?><gmd:MD_Metadata xmlns:gss=\"http://www.isotc211.org/2005/gss\" xmlns:gsr=\"http://www.isotc211.org/2005/gsr\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gts=\"http://www.isotc211.org/2005/gts\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\"><gmd:fileIdentifier>\r\n    <gco:CharacterString>test-field-identifier</gco:CharacterString>\r\n  </gmd:fileIdentifier></gmd:MD_Metadata>";
-        var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData(messageBody), messageId: "messageId", properties: serviceBusMessageProps);
+        var blobContent = "<?xml version=\"1.0\"?><gmd:MD_Metadata xmlns:gss=\"http://www.isotc211.org/2005/gss\" xmlns:gsr=\"http://www.isotc211.org/2005/gsr\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gts=\"http://www.isotc211.org/2005/gts\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\"><gmd:fileIdentifier>\r\n    <gco:CharacterString>test-field-identifier</gco:CharacterString>\r\n  </gmd:fileIdentifier></gmd:MD_Metadata>";
+
+        var blobServiceMock = new Mock<IBlobService>();
+        blobServiceMock.Setup(x => x.GetContentAsync(It.IsAny<GetBlobContentRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(blobContent);
+        blobServiceMock.Setup(x => x.SaveAsync(It.IsAny<SaveBlobRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(It.IsAny<string>());
+
+        var messageBody = "{ \"FileIdentifier\":\"\",\"DataFormat\":\"xml\",\"DataStandard\":\"Gemini23\",\"DataSource\":\"Medin\"}";
+
+        
+        var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData(messageBody), messageId: "messageId");
         var mockReceiver = new Mock<ServiceBusReceiver>();
         var processMessageEventArgs = new ProcessMessageEventArgs(receivedMessage, It.IsAny<ServiceBusReceiver>(), It.IsAny<CancellationToken>());
         var mockProcessMessageEventArgs = new Mock<ProcessMessageEventArgs>(MockBehavior.Strict, new object[] { receivedMessage, mockReceiver.Object, It.IsAny<string>(), It.IsAny<CancellationToken>() });
         mockProcessMessageEventArgs.Setup(receiver => receiver.CompleteMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         var mockServiceProvider = ServiceProviderForTests.Get();
 
-
         // Act
-        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobServiceMock.Object, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
         var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
         if (task != null) await task;
@@ -154,25 +162,26 @@ public class OrchestrationServiceTests
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
         LoggerForTests.Get<JnccMapper>(out Mock<ILogger<JnccMapper>> mockLogger);
-        var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
-                                              out Mock<BlobContainerClient> mockBlobContainerClient,
-                                              out Mock<BlobClient> mockBlobClient);
 
-        var serviceBusMessageProps = new Dictionary<string, object>
-        {
-            { "DataSource", "Jncc" }
-        };
-        var messageBody = "<?xml version=\"1.0\"?><gmd:MD_Metadata xmlns:gss=\"http://www.isotc211.org/2005/gss\" xmlns:gsr=\"http://www.isotc211.org/2005/gsr\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gts=\"http://www.isotc211.org/2005/gts\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\"><gmd:fileIdentifier>\r\n    <gco:CharacterString>test-field-identifier</gco:CharacterString>\r\n  </gmd:fileIdentifier></gmd:MD_Metadata>";
-        var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData(messageBody), messageId: "messageId", properties: serviceBusMessageProps);
+        var blobContent = "<?xml version=\"1.0\"?><gmd:MD_Metadata xmlns:gss=\"http://www.isotc211.org/2005/gss\" xmlns:gsr=\"http://www.isotc211.org/2005/gsr\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gts=\"http://www.isotc211.org/2005/gts\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\"><gmd:fileIdentifier>\r\n    <gco:CharacterString>test-field-identifier</gco:CharacterString>\r\n  </gmd:fileIdentifier></gmd:MD_Metadata>";
+        
+        var blobServiceMock = new Mock<IBlobService>();
+        blobServiceMock.Setup(x => x.GetContentAsync(It.IsAny<GetBlobContentRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(blobContent);
+        blobServiceMock.Setup(x => x.SaveAsync(It.IsAny<SaveBlobRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(It.IsAny<string>());
+
+        var messageBody = "{ \"FileIdentifier\":\"\",\"DataFormat\":\"xml\",\"DataStandard\":\"Gemini23\",\"DataSource\":\"Jncc\"}";
+
+        var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData(messageBody), messageId: "messageId");
         var mockReceiver = new Mock<ServiceBusReceiver>();
         var processMessageEventArgs = new ProcessMessageEventArgs(receivedMessage, It.IsAny<ServiceBusReceiver>(), It.IsAny<CancellationToken>());
         var mockProcessMessageEventArgs = new Mock<ProcessMessageEventArgs>(MockBehavior.Strict, new object[] { receivedMessage, mockReceiver.Object, It.IsAny<string>(), It.IsAny<CancellationToken>() });
         mockProcessMessageEventArgs.Setup(receiver => receiver.CompleteMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         var mockServiceProvider = ServiceProviderForTests.Get();
 
-
         // Act
-        var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
+        var service = new OrchestrationService(configuration, blobServiceMock.Object, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
         var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
         if (task != null) await task;
@@ -192,6 +201,7 @@ public class OrchestrationServiceTests
                             out Mock<ILogger<OrchestrationService>> loggerMock,
                             out Mock<ServiceBusSender> mockServiceBusSender,
                             out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+
         var blobService = BlobServiceForTests.Get(out Mock<BlobServiceClient> mockBlobServiceClient,
                                               out Mock<BlobContainerClient> mockBlobContainerClient,
                                               out Mock<BlobClient> mockBlobClient);
@@ -202,6 +212,7 @@ public class OrchestrationServiceTests
         var mockProcessMessageEventArgs = new Mock<ProcessMessageEventArgs>(MockBehavior.Strict, new object[] { receivedMessage, mockReceiver.Object, It.IsAny<string>(), It.IsAny<CancellationToken>() });
         mockProcessMessageEventArgs.Setup(x => x.AbandonMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<IDictionary<string, object>>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         var mockServiceProvider = new Mock<IServiceProvider>();
+        
         // Act
         var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -237,7 +248,7 @@ public class OrchestrationServiceTests
         // Act
         var service = new OrchestrationService(configuration, blobService, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider.Object, loggerMock.Object);
         var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("SendMessageAsync", BindingFlags.NonPublic | BindingFlags.Instance);
-        var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { "test-message", It.IsAny<string>(), It.IsAny<CancellationToken>() }));
+        var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { "test-message", It.IsAny<CancellationToken>() }));
         if (task != null) await task;
 
         // Assert

@@ -16,6 +16,7 @@ using Ncea.Mapper.Processors;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Ncea.Mapper.AutoMapper;
 using Azure.Storage.Blobs;
+using Ncea.Mapper.Enums;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -111,12 +112,19 @@ static void ConfigureServices(HostApplicationBuilder builder)
     builder.Services.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
 }
 
-static void ConfigureStorage(IConfigurationRoot configuration, HostApplicationBuilder builder)
+static async Task ConfigureStorage(IConfigurationRoot configuration, HostApplicationBuilder builder)
 {
     var blobStorageEndpoint = new Uri(configuration.GetValue<string>("BlobStorageUri")!);
     var blobServiceClient = new BlobServiceClient(blobStorageEndpoint, new DefaultAzureCredential());
 
     builder.Services.AddSingleton(x => blobServiceClient);
+
+    foreach (string dataSourceName in Enum.GetNames(typeof(DataSource)))
+    {
+        var containerName = $"{dataSourceName.ToLowerInvariant()}-mapper-staging";
+        var container = blobServiceClient.GetBlobContainerClient(containerName);
+        await container.CreateIfNotExistsAsync();
+    }
 }
 
 static async Task CreateServiceBusQueueIfNotExist(ServiceBusAdministrationClient servicebusAdminClient, string queueName)

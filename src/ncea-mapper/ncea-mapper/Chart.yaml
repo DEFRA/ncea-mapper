@@ -1,6 +1,0 @@
-apiVersion: v2
-name: ncea-mapper
-description: A Helm chart for ncea mapper service
-type: application
-version: 1.0.0
-appVersion: "0.0.1"

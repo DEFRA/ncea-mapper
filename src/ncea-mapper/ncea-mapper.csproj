@@ -8,6 +8,7 @@
     <RootNamespace>ncea.mapper</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
+    <Version>0.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

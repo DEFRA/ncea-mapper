@@ -131,7 +131,6 @@ public class OrchestrationServiceTests
             .ReturnsAsync(It.IsAny<string>());
 
         var messageBody = "{ \"FileIdentifier\":\"\",\"DataFormat\":\"xml\",\"DataStandard\":\"Gemini23\",\"DataSource\":\"Medin\"}";
-
         
         var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData(messageBody), messageId: "messageId");
         var mockReceiver = new Mock<ServiceBusReceiver>();

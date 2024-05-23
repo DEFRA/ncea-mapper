@@ -41,22 +41,22 @@ resources:
 extends:
   template: /pipelines/common-app-build.yaml@DEFRA-ADPPipelineCommon
   parameters:
-    projectName: "ncea-harvester"
-    serviceName: "ncea-harvester"
+    projectName: "ncea-mapper"
+    serviceName: "ncea-mapper"
     teamName: "ncea-search"
     deployFromFeature: ${{ parameters.deployFromFeature }}
     deployConfigOnly: ${{ parameters.deployConfigOnly }}
     appBuildConfig:
       appFrameworkType: "dotnet"
       frameworkVersion: "8.x"
-      projectPath: "./src/ncea-harvester/ncea-harvester.csproj"
-      testProjectPath: "./src/ncea-harvester.tests/ncea-harvester.tests.csproj"
-      manifestPath: "./src/ncea-harvester/obj/project.assets.json"
-      imageRepoName: "ncea-harvester"
+      projectPath: "./src/ncea-mapper/ncea-mapper.csproj"
+      testProjectPath: "./src/ncea-mapper.tests/ncea-mapper.tests.csproj"
+      manifestPath: "./src/ncea-mapper/obj/project.assets.json"
+      imageRepoName: "ncea-mapper"
     appTestConfig:
       testFilePath: "./docker-compose.test.yaml"
     appDeployConfig:
       filepath: "./appConfig"
       filetype: "yaml"
       variableGroups:
-        - ncea-harvester-<environment>
+        - ncea-mapper-<environment>

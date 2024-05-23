@@ -36,7 +36,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 ConfigureKeyVault(configuration, builder);
 ConfigureLogging(builder);
-ConfigureStorage(configuration, builder);
+await ConfigureStorage(configuration, builder);
 await ConfigureServiceBusQueue(configuration, builder);
 ConfigureServices(builder);
 

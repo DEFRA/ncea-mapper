@@ -80,9 +80,9 @@ public class OrchestrationService : IOrchestrationService
             await _blobService.SaveAsync(new SaveBlobRequest(xmlStream, xmlFileName, dataSource), args.CancellationToken);
 
             var mdcMappedRecord = new MdcMappedRecordMessage(harvestedRecord.FileIdentifier, harvestedRecord.DataSource);
-            var message = JsonSerializer.Serialize(mdcMappedRecord, options);
+            var messageToEnricher = JsonSerializer.Serialize(mdcMappedRecord, options);
 
-            await SendMessageAsync(mdcMappedData);
+            await SendMessageAsync(messageToEnricher);
 
             await args.CompleteMessageAsync(args.Message);
         }

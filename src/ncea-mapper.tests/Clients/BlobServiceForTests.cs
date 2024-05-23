@@ -19,6 +19,15 @@ public static class BlobServiceForTests
             x.UploadAsync(It.IsAny<Stream>(), It.IsAny<bool>(),
             It.IsAny<CancellationToken>())).Returns(Task.FromResult(AddBlobItems()));
 
+        var blobContent = new BinaryData("this is test data");
+        var downloadResult = BlobsModelFactory.BlobDownloadResult(content: blobContent);
+
+        // Empty Response mock to merge with since I only care about the downloadResult. Modify at will.
+        var response = Response.FromValue(downloadResult, new Mock<Response>().Object);
+
+        mockBlobClient.Setup(x =>
+            x.DownloadContentAsync(It.IsAny<CancellationToken>())).Returns(Task.FromResult(response));
+
         mockBlobServiceClient = new Mock<BlobServiceClient>();
         mockBlobContainerClient = new Mock<BlobContainerClient>();
 

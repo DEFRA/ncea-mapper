@@ -20,7 +20,12 @@ public class OrchestrationService : IOrchestrationService
     private readonly ServiceBusProcessor _processor;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<OrchestrationService> _logger;
-    private readonly string? _mdcSchemaLocation;
+    private static readonly JsonSerializerOptions _serializerOptions = new()
+    {
+        Converters = { new JsonStringEnumConverter() }
+    };
+    private readonly string _mdcSchemaLocation;
+    private readonly string _mapperStagingContainerSuffix;
 
     public OrchestrationService(IConfiguration configuration,
         IBlobService blobService,
@@ -31,7 +36,8 @@ public class OrchestrationService : IOrchestrationService
     {
         var harvesterQueueName = configuration.GetValue<string>("HarvesterQueueName");
         var mapperQueueName = configuration.GetValue<string>("MapperQueueName");
-        _mdcSchemaLocation = configuration.GetValue<string>("MdcSchemaLocation");
+        _mdcSchemaLocation = configuration.GetValue<string>("MdcSchemaLocation")!;
+        _mapperStagingContainerSuffix = configuration.GetValue<string>("MapperStagingContainerSuffix")!;
 
         _processor = serviceBusProcessorFactory.CreateClient(harvesterQueueName);
         _sender = serviceBusSenderFactory.CreateClient(mapperQueueName);
@@ -56,18 +62,15 @@ public class OrchestrationService : IOrchestrationService
 
     private async Task ProcessMessagesAsync(ProcessMessageEventArgs args)
     {
-        var options = new JsonSerializerOptions
-        {
-            Converters = { new JsonStringEnumConverter() }
-        };
-
         try
         {
             var body = Encoding.UTF8.GetString(args.Message.Body);            
-            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecordMessage>(body, options)!;
-            var dataSource = harvestedRecord.DataSource.ToString().ToLowerInvariant();
+            var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecordMessage>(body, _serializerOptions)!;
 
-            var request = new GetBlobContentRequest(harvestedRecord.FileIdentifier, dataSource);
+            var dataSource = harvestedRecord.DataSource.ToString().ToLowerInvariant();
+            var fileName = string.Concat(harvestedRecord.FileIdentifier, ".xml");
+
+            var request = new GetBlobContentRequest(fileName, dataSource);
             var harvestedContent = await _blobService.GetContentAsync(request, args.CancellationToken);
 
             var mdcMappedData = await _serviceProvider
@@ -75,12 +78,11 @@ public class OrchestrationService : IOrchestrationService
                 .Transform(_mdcSchemaLocation!, harvestedContent);
 
             var xmlStream = new MemoryStream(Encoding.UTF8.GetBytes(mdcMappedData));
-            var xmlFileName = string.Concat(harvestedRecord.FileIdentifier, ".xml");
-
-            await _blobService.SaveAsync(new SaveBlobRequest(xmlStream, xmlFileName, dataSource), args.CancellationToken);
+            var mapperStagingContainer = $"{dataSource}-{_mapperStagingContainerSuffix}";
+            await _blobService.SaveAsync(new SaveBlobRequest(xmlStream, fileName, mapperStagingContainer), args.CancellationToken);
 
             var mdcMappedRecord = new MdcMappedRecordMessage(harvestedRecord.FileIdentifier, harvestedRecord.DataSource);
-            var messageToEnricher = JsonSerializer.Serialize(mdcMappedRecord, options);
+            var messageToEnricher = JsonSerializer.Serialize(mdcMappedRecord, _serializerOptions);
 
             await SendMessageAsync(messageToEnricher);
 

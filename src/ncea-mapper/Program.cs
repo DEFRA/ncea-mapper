@@ -17,6 +17,7 @@ using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Ncea.Mapper.AutoMapper;
 using Azure.Storage.Blobs;
 using Ncea.Mapper.Enums;
+using Ncea.mapper.Infrastructure.Contracts;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -108,6 +109,7 @@ static void ConfigureServices(HostApplicationBuilder builder)
     builder.Services.AddSingleton<IApiClient, ApiClient>();
     builder.Services.AddSingleton<IOrchestrationService, OrchestrationService>();
     builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
+    builder.Services.AddSingleton<IBlobService, BlobService>();
     builder.Services.AddKeyedSingleton<IMapperService, JnccMapper>("Jncc");
     builder.Services.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
 }
@@ -115,13 +117,14 @@ static void ConfigureServices(HostApplicationBuilder builder)
 static async Task ConfigureStorage(IConfigurationRoot configuration, HostApplicationBuilder builder)
 {
     var blobStorageEndpoint = new Uri(configuration.GetValue<string>("BlobStorageUri")!);
+    var mapperStagingContainerSuffix = configuration.GetValue<string>("MapperStagingContainerSuffix");
     var blobServiceClient = new BlobServiceClient(blobStorageEndpoint, new DefaultAzureCredential());
 
     builder.Services.AddSingleton(x => blobServiceClient);
 
     foreach (string dataSourceName in Enum.GetNames(typeof(DataSource)))
     {
-        var containerName = $"{dataSourceName.ToLowerInvariant()}-mapper-staging";
+        var containerName = $"{dataSourceName.ToLowerInvariant()}-{mapperStagingContainerSuffix}";
         var container = blobServiceClient.GetBlobContainerClient(containerName);
         await container.CreateIfNotExistsAsync();
     }

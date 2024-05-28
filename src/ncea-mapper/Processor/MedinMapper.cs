@@ -26,22 +26,17 @@ public class MedinMapper : IMapperService
         mdc_Metadata.nceaIdentifiers = CreateNceaIdentifiersNode(fileIdentifier!);
         mdc_Metadata.nceaClassifierInfo = CreateNceaClassifierInfoNode();
 
-        //Serialize MDC metadata object to XML string
+        //Namespace confogurations
         var nameSpaces = new XmlSerializerNamespaces();
         nameSpaces.Add("xsi", "http://www.w3.org/2001/XMLSchema-instance");
         nameSpaces.Add("xsd", "http://www.w3.org/2001/XMLSchema");
         nameSpaces.Add("gmd", "http://www.isotc211.org/2005/gmd");
         nameSpaces.Add("mdc", mdcSchemaLocation);
 
+        //Serialize MDC metadata object to XML string
         var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);        
         return await Task.FromResult(mdcMetadataString!);
     }
-
-    private static NceaClassifierInfo CreateNceaClassifierInfoNode()
-    {       
-        return new NceaClassifierInfo() { NC_Classifiers = [] };
-    }
-
     private static NceaIdentifiers CreateNceaIdentifiersNode(string fileIdentifier)
     {
         var dataSource = Convert.ToString(DataSource.Medin);
@@ -60,5 +55,10 @@ public class MedinMapper : IMapperService
                 }
             }
         };
+    }
+
+    private static NceaClassifierInfo CreateNceaClassifierInfoNode()
+    {
+        return new NceaClassifierInfo() { NC_Classifiers = [] };
     }
 }

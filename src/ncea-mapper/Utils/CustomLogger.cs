@@ -1,5 +1,8 @@
-﻿namespace Ncea.Mapper.Utils;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace Ncea.Mapper.Utils;
+
+[ExcludeFromCodeCoverage]
 public static class CustomLogger
 {
     public static void LogErrorMessage(ILogger logger, string errorMessage, Exception? exception)

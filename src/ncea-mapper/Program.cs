@@ -10,11 +10,14 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.Extensions.Azure;
-using ncea.mapper.Processor;
-using ncea.mapper.Processor.Contracts;
+using Ncea.Mapper.Processor;
+using Ncea.Mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using ncea.mapper.AutoMapper;
+using Ncea.Mapper.AutoMapper;
+using Azure.Storage.Blobs;
+using Ncea.Mapper.Enums;
+using Ncea.mapper.Infrastructure.Contracts;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -34,6 +37,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 ConfigureKeyVault(configuration, builder);
 ConfigureLogging(builder);
+await ConfigureStorage(configuration, builder);
 await ConfigureServiceBusQueue(configuration, builder);
 ConfigureServices(builder);
 
@@ -105,8 +109,25 @@ static void ConfigureServices(HostApplicationBuilder builder)
     builder.Services.AddSingleton<IApiClient, ApiClient>();
     builder.Services.AddSingleton<IOrchestrationService, OrchestrationService>();
     builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
+    builder.Services.AddSingleton<IBlobService, BlobService>();
     builder.Services.AddKeyedSingleton<IMapperService, JnccMapper>("Jncc");
     builder.Services.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
+}
+
+static async Task ConfigureStorage(IConfigurationRoot configuration, HostApplicationBuilder builder)
+{
+    var blobStorageEndpoint = new Uri(configuration.GetValue<string>("BlobStorageUri")!);
+    var mapperStagingContainerSuffix = configuration.GetValue<string>("MapperStagingContainerSuffix");
+    var blobServiceClient = new BlobServiceClient(blobStorageEndpoint, new DefaultAzureCredential());
+
+    builder.Services.AddSingleton(x => blobServiceClient);
+
+    foreach (string dataSourceName in Enum.GetNames(typeof(DataSource)))
+    {
+        var containerName = $"{dataSourceName.ToLowerInvariant()}-{mapperStagingContainerSuffix}";
+        var container = blobServiceClient.GetBlobContainerClient(containerName);
+        await container.CreateIfNotExistsAsync();
+    }
 }
 
 static async Task CreateServiceBusQueueIfNotExist(ServiceBusAdministrationClient servicebusAdminClient, string queueName)

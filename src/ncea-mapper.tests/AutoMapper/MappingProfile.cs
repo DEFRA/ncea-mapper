@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Ncea.Mapper.Models;
 
-namespace ncea_mapper.tests.AutoMapper
+namespace Ncea.Mapper.Tests.AutoMapper
 {
     public class MappingProfile : Profile
     {

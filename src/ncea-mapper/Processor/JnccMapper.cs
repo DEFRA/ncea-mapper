@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ncea.mapper.Extensions;
-using Ncea.Mapper.Constants;
+using Ncea.Mapper.Enums;
+using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 using System.Xml.Serialization;
@@ -9,14 +9,13 @@ namespace Ncea.Mapper.Processors;
 
 public class JnccMapper : IMapperService
 {
-    private readonly ILogger<JnccMapper> _logger;
     private readonly IMapper _mapper;
 
-    public JnccMapper(ILogger<JnccMapper> logger, IMapper mapper)
+    public JnccMapper(IMapper mapper)
     {
-        _logger = logger;
         _mapper = mapper;
     }
+
     public async Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default)
     {
         //Deserialize from Gemini2.2 Metadata string to MDC metadata
@@ -36,7 +35,6 @@ public class JnccMapper : IMapperService
         nameSpaces.Add("mdc", mdcSchemaLocation);
 
         var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);
-        _logger.LogInformation("Mapping completed for DataSource: JNCC, FileIdentifier: {fileIdentifier}", fileIdentifier);
 
         return await Task.FromResult(mdcMetadataString!);
     }
@@ -48,7 +46,7 @@ public class JnccMapper : IMapperService
 
     private static NceaIdentifiers CreateNceaIdentifiersNode(string fileIdentifier)
     {
-        var dataSource = Convert.ToString(ProcessorType.Jncc);
+        var dataSource = Convert.ToString(DataSource.Jncc);
         var nceaRefValue = string.Concat(dataSource, "_", fileIdentifier);
         return new NceaIdentifiers()
         {

@@ -1,7 +1,7 @@
 ﻿using Moq;
 using Microsoft.Extensions.Logging;
 
-namespace ncea_mapper.tests.Clients
+namespace Ncea.Mapper.Tests.Clients
 {
     public static class LoggerForTests
     {

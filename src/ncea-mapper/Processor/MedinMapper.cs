@@ -8,13 +8,11 @@ using System.Xml.Serialization;
 namespace Ncea.Mapper.Processors;
 
 public class MedinMapper : IMapperService
-{    
-    private readonly ILogger<MedinMapper> _logger;
+{
     private readonly IMapper _mapper;
 
-    public MedinMapper(ILogger<MedinMapper> logger, IMapper mapper)
-    {     
-        _logger = logger;
+    public MedinMapper(IMapper mapper)
+    {
         _mapper = mapper;
     }
     public async Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default)
@@ -34,9 +32,8 @@ public class MedinMapper : IMapperService
         nameSpaces.Add("xsd", "http://www.w3.org/2001/XMLSchema");
         nameSpaces.Add("gmd", "http://www.isotc211.org/2005/gmd");
         nameSpaces.Add("mdc", mdcSchemaLocation);
-        var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);
-        _logger.LogInformation("Mapping completed for DataSource: Medin, FileIdentifier: {fileIdentifier}", fileIdentifier);
-        
+
+        var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);        
         return await Task.FromResult(mdcMetadataString!);
     }
 
@@ -50,18 +47,18 @@ public class MedinMapper : IMapperService
         var dataSource = Convert.ToString(DataSource.Medin);
         var nceaRefValue = string.Concat(dataSource, "_", fileIdentifier);
         return new NceaIdentifiers()
-                    {
-                        MasterReferenceID = new NceaIdentifiersMasterReferenceId()
-                        {
-                            catalogueEntry = new NceaIdentifiersMasterReferenceIdCatalogueEntry() 
-                            { 
-                                CharacterString = nceaRefValue
-                            },
-                            sourceSystemReferenceID = new NceaIdentifiersMasterReferenceIdSourceSystemReferenceId() 
-                            { 
-                                CharacterString = nceaRefValue
-                            }
-                        }
-                    };
+        {
+            MasterReferenceID = new NceaIdentifiersMasterReferenceId()
+            {
+                catalogueEntry = new NceaIdentifiersMasterReferenceIdCatalogueEntry()
+                {
+                    CharacterString = nceaRefValue
+                },
+                sourceSystemReferenceID = new NceaIdentifiersMasterReferenceIdSourceSystemReferenceId()
+                {
+                    CharacterString = nceaRefValue
+                }
+            }
+        };
     }
 }

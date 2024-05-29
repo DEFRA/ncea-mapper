@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using Ncea.Mapper.BusinessExceptions;
 using Ncea.Mapper.Enums;
 using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
-using System.Xml.Linq;
+using Ncea.Mapper.Services.Contracts;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -13,11 +12,14 @@ namespace Ncea.Mapper.Processors;
 public class JnccMapper : IMapperService
 {
     private readonly IMapper _mapper;
+    private readonly IValidationService _validationService;
 
-    public JnccMapper(IMapper mapper)
+    public JnccMapper(IMapper mapper, IValidationService validationService)
     {
         _mapper = mapper;
+        _validationService = validationService;
     }
+
     public async Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default)
     {
         //Add Namespaces
@@ -34,11 +36,11 @@ public class JnccMapper : IMapperService
 
         //Compare source and target data
         var mdcMetadataStr = mdc_Metadata.Serialize(nameSpaces);
-        var IsSourceAndTargetEqual = IsEqual(harvestedData, mdcMetadataStr);
-        if(!IsSourceAndTargetEqual)
+        var hasNoDataLoss = _validationService.IsValid(harvestedData, mdcMetadataStr);
+        if(!hasNoDataLoss)
         {
-            var exceptionMessage = $"Mapper warning | Potential data loss identified for DataSource : {DataSource.Jncc}, FileIdentifier : {fileIdentifier}";
-            throw new XmlValidationException(exceptionMessage, new Exception(exceptionMessage));
+            var exceptionMessage = $"Mapper Exception | Potential data loss identified for DataSource : {DataSource.Jncc}, FileIdentifier : {fileIdentifier}";
+            throw new XmlSchemaValidationException(exceptionMessage);
         }
 
         //Populate MDC classifier fields
@@ -49,13 +51,6 @@ public class JnccMapper : IMapperService
         var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);
 
         return await Task.FromResult(mdcMetadataString!);
-    }
-
-    private static bool IsEqual(string sourceXmlStr, string targetXmlStr)
-    {
-        var sourceXml = XDocument.Parse(sourceXmlStr);
-        var targetXml = XDocument.Parse(targetXmlStr);
-        return (sourceXml.Descendants().Count() == targetXml.Descendants().Count());
     }
 
     private static NceaClassifierInfo CreateNceaClassifierInfoNode()

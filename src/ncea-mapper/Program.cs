@@ -11,13 +11,14 @@ using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.Extensions.Azure;
 using Ncea.Mapper.Processor;
-using Ncea.Mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using Ncea.Mapper.AutoMapper;
 using Azure.Storage.Blobs;
 using Ncea.Mapper.Enums;
-using Ncea.mapper.Infrastructure.Contracts;
+using Ncea.Mapper.Processor.Contracts;
+using Ncea.Mapper.AutoMapper;
+using Ncea.Mapper.Services.Contracts;
+using Ncea.Mapper.Services;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -110,6 +111,7 @@ static void ConfigureServices(HostApplicationBuilder builder)
     builder.Services.AddSingleton<IOrchestrationService, OrchestrationService>();
     builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
     builder.Services.AddSingleton<IBlobService, BlobService>();
+    builder.Services.AddSingleton<IValidationService, ValidationService>();
     builder.Services.AddKeyedSingleton<IMapperService, JnccMapper>("Jncc");
     builder.Services.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
 }

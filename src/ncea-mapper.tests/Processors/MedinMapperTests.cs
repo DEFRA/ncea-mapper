@@ -5,17 +5,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Ncea.mapper.Infrastructure.Contracts;
-using Ncea.Mapper.AutoMapper;
-using Ncea.Mapper.BusinessExceptions;
 using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
+using Ncea.Mapper.Services.Contracts;
 using Ncea.Mapper.Tests.Clients;
-using ncea_mapper.tests.Clients;
-using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace Ncea.Mapper.Tests.Processors;
 
@@ -36,14 +33,21 @@ public class MedinMapperTests
         var serviceProvider = ServiceProviderForTests.Get();
         var mapper = serviceProvider.GetRequiredService<IMapper>();
 
+        //Create Auto mapper object
+        //var mappingProfile = new MappingProfile();
+        //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        //var mapper = new AutoMapper.Mapper(mappingConfig);
 
-        var medinService = new MedinMapper(mapper);
+        var validationServiceMock = new Mock<IValidationService>();
+        validationServiceMock.Setup(x => x.IsValid(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns(true);
+
+        var medinService = new MedinMapper(mapper, validationServiceMock.Object);
 
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_dataset_v3_1_2_example.xml");
         var xDoc = new XmlDocument();
         xDoc.Load(filePath);
         var messageBody = xDoc.InnerXml;
-
 
         // Act
         var mdcMetadataStr = await medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
@@ -73,7 +77,16 @@ public class MedinMapperTests
         var serviceProvider = ServiceProviderForTests.Get();
         var mapper = serviceProvider.GetRequiredService<IMapper>();
 
-        var medinService = new MedinMapper(mapper);
+        var validationServiceMock = new Mock<IValidationService>();
+        validationServiceMock.Setup(x => x.IsValid(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns(true);
+
+        //Create Auto mapper object
+        //var mappingProfile = new MappingProfile();
+        //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        //var mapper = new AutoMapper.Mapper(mappingConfig);
+
+        var medinService = new MedinMapper(mapper, validationServiceMock.Object);
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_series_v3_1_2_example.xml");
         var xDoc = new XmlDocument();
         xDoc.Load(filePath);
@@ -108,7 +121,16 @@ public class MedinMapperTests
         var serviceProvider = ServiceProviderForTests.Get();
         var mapper = serviceProvider.GetRequiredService<IMapper>();
 
-        var medinService = new MedinMapper(mapper);
+        var validationServiceMock = new Mock<IValidationService>();
+        validationServiceMock.Setup(x => x.IsValid(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns(true);
+
+        //Create Auto mapper object
+        //var mappingProfile = new MappingProfile();
+        //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        //var mapper = new AutoMapper.Mapper(mappingConfig);
+
+        var medinService = new MedinMapper(mapper, validationServiceMock.Object);
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_srv_v3_1_2_example.xml");
         var xDoc = new XmlDocument();
         xDoc.Load(filePath);
@@ -129,7 +151,7 @@ public class MedinMapperTests
     }
 
     [Fact]
-    public async Task Process_InValidMetadata_ThrowsXmlValidationException()
+    public async Task Transform_WhenDataLossOccurs_ThenThrowXmlSchemaValidationException()
     {
         //Arrange
         var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
@@ -143,15 +165,26 @@ public class MedinMapperTests
         var serviceProvider = ServiceProviderForTests.Get();
         var mapper = serviceProvider.GetRequiredService<IMapper>();
 
-        var medinService = new MedinMapper(mapper);
-        var messageBody = "<?xml version=\"1.0\"?><gmd:MD_Metadata xmlns:gss=\"http://www.isotc211.org/2005/gss\" xmlns:gsr=\"http://www.isotc211.org/2005/gsr\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gts=\"http://www.isotc211.org/2005/gts\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\"><gmd:fileIdentifier>\r\n    <gco:CharacterString>test-field-identifier</gco:CharacterString>\r\n  </gmd:fileIdentifier><test>Test Node</test></gmd:MD_Metadata>";
+        //Create Auto mapper object
+        //var mappingProfile = new MappingProfile();
+        //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
+        //var mapper = new AutoMapper.Mapper(mappingConfig);
 
+        var validationServiceMock = new Mock<IValidationService>();
+        validationServiceMock.Setup(x => x.IsValid(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns(false);
+
+        var medinService = new MedinMapper(mapper, validationServiceMock.Object);
+
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "MEDIN_Metadata_dataset_v3_1_2_example.xml");
+        var xDoc = new XmlDocument();
+        xDoc.Load(filePath);
+        var messageBody = xDoc.InnerXml;
 
         // Act
         var task = medinService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
 
-
         // Assert
-        await Assert.ThrowsAsync<XmlValidationException>(() => task!);
+        await Assert.ThrowsAsync<XmlSchemaValidationException>(() => task!);
     }
 }

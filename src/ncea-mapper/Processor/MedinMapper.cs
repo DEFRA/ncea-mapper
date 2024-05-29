@@ -57,7 +57,6 @@ public class MedinMapper : IMapperService
 
         var sourceTags = sourceXml.Descendants().Select(x => x.Name.LocalName);
         var targetTags = targetXml.Descendants().Select(x => x.Name.LocalName);
-        var missingNodes = targetTags.Where(n => !sourceTags.Any(o => o == n)).ToList();
 
         return (sourceXml.Descendants().Count() == targetXml.Descendants().Count());
     }

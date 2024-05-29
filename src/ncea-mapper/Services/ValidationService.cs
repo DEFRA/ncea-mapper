@@ -1,5 +1,4 @@
-﻿
-using Ncea.Mapper.Services.Contracts;
+﻿using Ncea.Mapper.Services.Contracts;
 using System.Xml.Linq;
 
 namespace Ncea.Mapper.Services;
@@ -10,6 +9,6 @@ public class ValidationService : IValidationService
     {
         var sourceXml = XDocument.Parse(harvestedData);
         var targetXml = XDocument.Parse(mdcMappedData);
-        return (sourceXml.Descendants().Count() == targetXml.Descendants().Count());
+        return sourceXml.Descendants().Count() == targetXml.Descendants().Count();
     }
 }

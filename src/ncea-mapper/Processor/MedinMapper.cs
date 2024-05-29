@@ -4,7 +4,6 @@ using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 using Ncea.Mapper.Services.Contracts;
-using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -51,16 +50,6 @@ public class MedinMapper : IMapperService
         //Serialize MDC metadata object to XML string
         var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);        
         return await Task.FromResult(mdcMetadataString!);
-    }
-    private static bool IsEqual(string sourceXmlStr, string targetXmlStr)
-    {
-        var sourceXml = XDocument.Parse(sourceXmlStr);
-        var targetXml = XDocument.Parse(targetXmlStr);
-
-        var sourceTags = sourceXml.Descendants().Select(x => x.Name.LocalName);
-        var targetTags = targetXml.Descendants().Select(x => x.Name.LocalName);
-
-        return (sourceXml.Descendants().Count() == targetXml.Descendants().Count());
     }
 
     private static NceaIdentifiers CreateNceaIdentifiersNode(string fileIdentifier)

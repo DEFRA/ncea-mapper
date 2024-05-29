@@ -12,6 +12,7 @@ using Ncea.Mapper.Enums;
 using Azure;
 using Ncea.Mapper.Utils;
 using Ncea.Mapper.BusinessExceptions;
+using System.Xml.Schema;
 
 namespace Ncea.Mapper.Processor;
 
@@ -108,6 +109,10 @@ public class OrchestrationService : IOrchestrationService
         {
             var errorMessage = $"Error occured while reading the harvested file during mdc mapping process for Data source: {dataSource}, file-id: {fileIdentifier}";
             await HandleException(args, ex, new BlobStorageNotAccessibleException(errorMessage, ex));
+        }
+        catch (XmlValidationException ex)
+        {
+            await HandleException(args, ex, new XmlValidationException(ex.Message, ex));
         }
         catch (Exception ex)
         {

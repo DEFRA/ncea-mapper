@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ using Ncea.Mapper.Tests.Clients;
 using ncea_mapper.tests.Clients;
 using System.Reflection;
 using System.Text.Json;
+using System.Xml.Schema;
 
 namespace Ncea.Mapper.Tests.Processors;
 
@@ -222,7 +224,47 @@ public class OrchestrationServiceTests
         mockProcessMessageEventArgs.Verify(x => x.AbandonMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<IDictionary<string, object>>(), It.IsAny<CancellationToken>()), Times.Once);
         await Assert.ThrowsAsync<MapperArgumentException>(() => task!);
     }
-    
+
+    [Fact]
+    public async Task ProcessMessagesAsync_WhenTransformationCausedDataLoss_ThenShouldAbandonMessageAsyncAndThrowXmlSchemaException()
+    {
+        // Arrange
+        OrchestrationServiceForTests.Get(out IConfiguration configuration,
+                            out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
+                            out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
+                            out Mock<IOrchestrationService> mockOrchestrationService,
+                            out Mock<ILogger<OrchestrationService>> loggerMock,
+                            out Mock<ServiceBusSender> mockServiceBusSender,
+                            out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        LoggerForTests.Get<MedinMapper>(out Mock<ILogger<MedinMapper>> mockLogger);
+
+        var blobContent = "<?xml version=\"1.0\"?><gmd:MD_Metadata xmlns:gss=\"http://www.isotc211.org/2005/gss\" xmlns:gsr=\"http://www.isotc211.org/2005/gsr\" xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gts=\"http://www.isotc211.org/2005/gts\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:srv=\"http://www.isotc211.org/2005/srv\" xmlns:gmx=\"http://www.isotc211.org/2005/gmx\" xmlns:gmd=\"http://www.isotc211.org/2005/gmd\"><gmd:fileIdentifier>\r\n    <gco:CharacterString>test-field-identifier</gco:CharacterString>\r\n  </gmd:fileIdentifier><test>Test Node</test></gmd:MD_Metadata>";
+
+        var blobServiceMock = new Mock<IBlobService>();
+        blobServiceMock.Setup(x => x.GetContentAsync(It.IsAny<GetBlobContentRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(blobContent);
+        blobServiceMock.Setup(x => x.SaveAsync(It.IsAny<SaveBlobRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(It.IsAny<string>());
+
+        var messageBody = "{ \"FileIdentifier\":\"\",\"DataFormat\":\"xml\",\"DataStandard\":\"Gemini23\",\"DataSource\":\"Medin\"}";
+
+        var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData(messageBody), messageId: "messageId");
+        var mockReceiver = new Mock<ServiceBusReceiver>();
+        var processMessageEventArgs = new ProcessMessageEventArgs(receivedMessage, It.IsAny<ServiceBusReceiver>(), It.IsAny<CancellationToken>());
+        var mockProcessMessageEventArgs = new Mock<ProcessMessageEventArgs>(MockBehavior.Strict, new object[] { receivedMessage, mockReceiver.Object, It.IsAny<string>(), It.IsAny<CancellationToken>() });
+        mockProcessMessageEventArgs.Setup(receiver => receiver.CompleteMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        mockProcessMessageEventArgs.Setup(x => x.AbandonMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), It.IsAny<IDictionary<string, object>>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+        var mockServiceProvider = ServiceProviderForTests.Get();
+
+        // Act
+        var service = new OrchestrationService(configuration, blobServiceMock.Object, mockServiceBusSenderFactory.Object, mockServiceBusProcessorFactory.Object, mockServiceProvider, loggerMock.Object);
+        var processMessagesAsyncMethod = typeof(OrchestrationService).GetMethod("ProcessMessagesAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+        var task = (Task?)(processMessagesAsyncMethod?.Invoke(service, new object[] { mockProcessMessageEventArgs.Object }));
+
+        // Assert
+        await Assert.ThrowsAsync<XmlValidationException>(() => task!);
+    }
+
     [Fact]
     public async Task ProcessMessagesAsync_WhenMessageBodyIsEmpty_ThenShouldAbandonMessageAsyncAndThrowMapperArgumentException()
     {

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
 using Ncea.Mapper.BusinessExceptions;
 using Ncea.Mapper.Enums;
 using Ncea.Mapper.Extensions;
@@ -38,8 +37,8 @@ public class MedinMapper : IMapperService
         var IsSourceAndTargetEqual = IsEqual(harvestedData, mdcMetadataStr);
         if (!IsSourceAndTargetEqual)
         {
-            var exceptionMessage = $"Mapper warning | Potential data loss identified for DataSource : {DataSource.Medin}, FileIdentifier : {fileIdentifier}";
-            throw new XmlValidationException(exceptionMessage, new Exception(exceptionMessage));
+            var exceptionMessage = $"Mapper Exception | Potential data loss identified for DataSource : {DataSource.Medin}, FileIdentifier : {fileIdentifier}";
+            throw new XmlSchemaValidationException(exceptionMessage);
         }
 
         //Populate MDC classifier fields

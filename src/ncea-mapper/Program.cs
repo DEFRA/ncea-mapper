@@ -11,13 +11,12 @@ using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.Extensions.Azure;
 using Ncea.Mapper.Processor;
-using Ncea.Mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
-using Ncea.Mapper.AutoMapper;
 using Azure.Storage.Blobs;
 using Ncea.Mapper.Enums;
-using Ncea.mapper.Infrastructure.Contracts;
+using Ncea.Mapper.Processor.Contracts;
+using Ncea.Mapper.AutoMapper;
 
 var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())

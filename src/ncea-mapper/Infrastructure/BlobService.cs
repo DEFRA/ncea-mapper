@@ -1,5 +1,5 @@
 ﻿using Azure.Storage.Blobs;
-using Ncea.mapper.Infrastructure.Contracts;
+using Ncea.Mapper.Infrastructure.Contracts;
 using Ncea.Mapper.Infrastructure.Models.Requests;
 using System.Text;
 

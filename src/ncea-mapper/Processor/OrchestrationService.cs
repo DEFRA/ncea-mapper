@@ -3,7 +3,7 @@ using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
 using Ncea.Mapper.Processor.Contracts;
-using Ncea.mapper.Infrastructure.Contracts;
+using Ncea.Mapper.Infrastructure.Contracts;
 using Ncea.Mapper.Infrastructure.Models.Requests;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
@@ -110,7 +110,7 @@ public class OrchestrationService : IOrchestrationService
             var errorMessage = $"Error occured while reading the harvested file during mdc mapping process for Data source: {dataSource}, file-id: {fileIdentifier}";
             await HandleException(args, ex, new BlobStorageNotAccessibleException(errorMessage, ex));
         }
-        catch (XmlValidationException ex)
+        catch (XmlSchemaValidationException ex)
         {
             await HandleException(args, ex, new XmlValidationException(ex.Message, ex));
         }

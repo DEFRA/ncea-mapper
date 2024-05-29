@@ -11,7 +11,6 @@ using Ncea.Mapper.Processor.Contracts;
 using Ncea.Mapper.Processors;
 using Ncea.Mapper.Services.Contracts;
 using Ncea.Mapper.Tests.Clients;
-using ncea_mapper.tests.Clients;
 using System.Xml;
 using System.Xml.Schema;
 

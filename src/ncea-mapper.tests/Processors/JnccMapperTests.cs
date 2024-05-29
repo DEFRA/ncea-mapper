@@ -9,7 +9,6 @@ using Ncea.Mapper.Processors;
 using Ncea.Mapper.Tests.Clients;
 using System.Xml;
 using Ncea.Mapper.Extensions;
-using ncea_mapper.tests.Clients;
 using Microsoft.Extensions.DependencyInjection;
 using Ncea.Mapper.Processor.Contracts;
 using System.Xml.Schema;

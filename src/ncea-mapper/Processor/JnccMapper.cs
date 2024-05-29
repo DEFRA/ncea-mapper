@@ -4,7 +4,6 @@ using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 using Ncea.Mapper.Services.Contracts;
-using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -52,13 +51,6 @@ public class JnccMapper : IMapperService
         var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);
 
         return await Task.FromResult(mdcMetadataString!);
-    }
-
-    private static bool IsEqual(string sourceXmlStr, string targetXmlStr)
-    {
-        var sourceXml = XDocument.Parse(sourceXmlStr);
-        var targetXml = XDocument.Parse(targetXmlStr);
-        return (sourceXml.Descendants().Count() == targetXml.Descendants().Count());
     }
 
     private static NceaClassifierInfo CreateNceaClassifierInfoNode()

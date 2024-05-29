@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using Ncea.Mapper.Models;
 
-namespace Ncea.Mapper.Tests.AutoMapper
+namespace Ncea.Mapper.Tests.AutoMapper;
+
+public class MappingProfile : Profile
 {
-    public class MappingProfile : Profile
+    public MappingProfile()
     {
-        public MappingProfile()
-        {
-            CreateMap<Gemini23MdMetadata, MdcMdMetadata>();
-        }
+        CreateMap<Gemini23MdMetadata, MdcMdMetadata>();
     }
 }

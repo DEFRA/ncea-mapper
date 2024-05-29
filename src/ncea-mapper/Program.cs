@@ -94,7 +94,7 @@ static void ConfigureLogging(HostApplicationBuilder builder)
                 configureApplicationInsightsLoggerOptions: (options) => { }
             );
         loggingBuilder.AddConsole();
-        loggingBuilder.AddFilter<ApplicationInsightsLoggerProvider>(null, LogLevel.Information);
+        loggingBuilder.AddFilter<ApplicationInsightsLoggerProvider>(null, LogLevel.Trace);
 
     });
     builder.Services.AddApplicationInsightsTelemetryWorkerService();

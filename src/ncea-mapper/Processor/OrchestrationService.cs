@@ -12,6 +12,7 @@ using Ncea.Mapper.Enums;
 using Azure;
 using Ncea.Mapper.Utils;
 using Ncea.Mapper.BusinessExceptions;
+using System.Xml.Schema;
 
 namespace Ncea.Mapper.Processor;
 

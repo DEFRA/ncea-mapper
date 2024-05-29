@@ -155,7 +155,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "country", Namespace = "http://www.isotc211.org/2005/gmd")]
         public Country Country { get; set; }
         [XmlElement(ElementName = "electronicMailAddress", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public ElectronicMailAddress ElectronicMailAddress { get; set; }
+        public List<ElectronicMailAddress> ElectronicMailAddress { get; set; }
     }
 
     [XmlRoot(ElementName = "address", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -468,6 +468,18 @@ namespace Ncea.Mapper.Models
         public string CharacterString { get; set; }
     }
 
+    [XmlRoot(ElementName = "purpose", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class Purpose
+    {
+        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string CharacterString { get; set; }
+        [XmlElement(ElementName = "Anchor", Namespace = "http://www.isotc211.org/2005/gmx")]
+        public Anchor anchor { get; set; }
+
+        [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string NilReason { get; set; }
+    }
+
     [XmlRoot(ElementName = "pointOfContact", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class PointOfContact
     {
@@ -654,7 +666,7 @@ namespace Ncea.Mapper.Models
     public class MD_Constraints
     {
         [XmlElement(ElementName = "useLimitation", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public UseLimitation UseLimitation { get; set; }
+        public List<UseLimitation> UseLimitation { get; set; }
     }
 
     [XmlRoot(ElementName = "resourceConstraints", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -800,6 +812,8 @@ namespace Ncea.Mapper.Models
         public List<TemporalElement> TemporalElements { get; set; }
         [XmlElement(ElementName = "verticalElement", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<VerticalElement> VerticalElements { get; set; }
+        [XmlElement(ElementName = "description", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public List<Description> Description { get; set; }
     }
 
     [XmlRoot(ElementName = "extent", Namespace = "http://www.isotc211.org/2005/srv")]
@@ -933,6 +947,8 @@ namespace Ncea.Mapper.Models
         public Abstract Abstract { get; set; }
         [XmlElement(ElementName = "pointOfContact", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<PointOfContact> PointOfContact { get; set; }
+        [XmlElement(ElementName = "purpose", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public List<Purpose> Purpose { get; set; }
         [XmlElement(ElementName = "resourceMaintenance", Namespace = "http://www.isotc211.org/2005/gmd")]
         public ResourceMaintenance ResourceMaintenance { get; set; }
         [XmlElement(ElementName = "descriptiveKeywords", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1470,6 +1486,8 @@ namespace Ncea.Mapper.Models
         public Abstract Abstract { get; set; }
         [XmlElement(ElementName = "pointOfContact", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<PointOfContact> PointOfContact { get; set; }
+        [XmlElement(ElementName = "purpose", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public List<Purpose> Purpose { get; set; }
         [XmlElement(ElementName = "resourceFormat", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<ResourceFormat> ResourceFormat { get; set; }
         [XmlElement(ElementName = "resourceMaintenance", Namespace = "http://www.isotc211.org/2005/gmd")]

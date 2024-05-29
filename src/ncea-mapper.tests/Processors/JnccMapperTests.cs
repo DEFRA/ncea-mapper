@@ -12,6 +12,8 @@ using Ncea.Mapper.Extensions;
 using ncea_mapper.tests.Clients;
 using Microsoft.Extensions.DependencyInjection;
 using Ncea.Mapper.Processor.Contracts;
+using System.Xml.Schema;
+using Ncea.Mapper.Services.Contracts;
 
 namespace Ncea.Mapper.Tests.Processors;
 
@@ -37,7 +39,11 @@ public class JnccMapperTests
         //var mappingConfig = new MapperConfiguration(cfg => cfg.AddProfile(mappingProfile));
         //var mapper = new AutoMapper.Mapper(mappingConfig);
 
-        var jnccService = new JnccMapper(mapper);
+        var validationServiceMock = new Mock<IValidationService>();
+        validationServiceMock.Setup(x => x.IsValid(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns(true);
+
+        var jnccService = new JnccMapper(mapper, validationServiceMock.Object);
 
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "JNCC_Metadata.xml");
         var xDoc = new XmlDocument();
@@ -56,4 +62,36 @@ public class JnccMapperTests
         Assert.True(mdcMetadata?.nceaIdentifiers?.MasterReferenceID?.sourceSystemReferenceID?.CharacterString?.StartsWith("jncc", StringComparison.OrdinalIgnoreCase));
     }
 
+    [Fact]
+    public async Task Transform_WhenDataLossOccurs_ThenThrowXmlSchemaValidationException()
+    {
+        //Arrange
+        var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
+        OrchestrationServiceForTests.Get(out IConfiguration configuration,
+                            out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
+                            out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
+                            out Mock<IOrchestrationService> mockOrchestrationService,
+                            out Mock<ILogger<JnccMapper>> loggerMock,
+                            out Mock<ServiceBusSender> mockServiceBusSender,
+                            out Mock<ServiceBusProcessor> mockServiceBusProcessor);
+        var serviceProvider = ServiceProviderForTests.Get();
+        var mapper = serviceProvider.GetRequiredService<IMapper>();
+
+        var validationServiceMock = new Mock<IValidationService>();
+        validationServiceMock.Setup(x => x.IsValid(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns(false);
+
+        var jnccService = new JnccMapper(mapper, validationServiceMock.Object);
+
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "JNCC_Metadata.xml");
+        var xDoc = new XmlDocument();
+        xDoc.Load(filePath);
+        var messageBody = xDoc.InnerXml;
+
+        // Act
+        var task = jnccService.Transform(mdcNamespaceStr, messageBody, It.IsAny<CancellationToken>());
+
+        // Assert
+        await Assert.ThrowsAsync<XmlSchemaValidationException>(() => task!);
+    }
 }

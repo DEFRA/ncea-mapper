@@ -3,6 +3,8 @@ using Moq;
 using Ncea.Mapper.Processors.Contracts;
 using Ncea.Mapper.Processors;
 using Ncea.Mapper.AutoMapper;
+using Ncea.Mapper.Services.Contracts;
+using Ncea.Mapper.Services;
 
 namespace ncea_mapper.tests.Clients
 {
@@ -14,6 +16,7 @@ namespace ncea_mapper.tests.Clients
 
             // Add any DI stuff here:
             serviceCollection.AddLogging();
+            serviceCollection.AddSingleton<IValidationService, ValidationService>();
             serviceCollection.AddKeyedSingleton<IMapperService, JnccMapper>("Jncc");
             serviceCollection.AddKeyedSingleton<IMapperService, MedinMapper>("Medin");
             serviceCollection.AddAutoMapper(typeof(MappingProfile));

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Ncea.Mapper.BusinessExceptions;
 using Ncea.Mapper.Enums;
 using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
+using Ncea.Mapper.Services.Contracts;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -13,11 +13,14 @@ namespace Ncea.Mapper.Processors;
 public class MedinMapper : IMapperService
 {
     private readonly IMapper _mapper;
+    private readonly IValidationService _validationService;
 
-    public MedinMapper(IMapper mapper)
+    public MedinMapper(IMapper mapper, IValidationService validationService)
     {
         _mapper = mapper;
+        _validationService = validationService;
     }
+
     public async Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default)
     {
         //Add Namespaces
@@ -34,8 +37,8 @@ public class MedinMapper : IMapperService
 
         //Compare source and target data
         var mdcMetadataStr = mdc_Metadata.Serialize(nameSpaces);
-        var IsSourceAndTargetEqual = IsEqual(harvestedData, mdcMetadataStr);
-        if (!IsSourceAndTargetEqual)
+        var hasNoDataLoss = _validationService.IsValid(harvestedData, mdcMetadataStr);
+        if (!hasNoDataLoss)
         {
             var exceptionMessage = $"Mapper Exception | Potential data loss identified for DataSource : {DataSource.Medin}, FileIdentifier : {fileIdentifier}";
             throw new XmlSchemaValidationException(exceptionMessage);

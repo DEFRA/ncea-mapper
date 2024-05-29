@@ -20,7 +20,7 @@ public class ValidationServiceTests
         var targetFilePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "JNCC_Metadata.xml");
         var xDocTarget = new XmlDocument();
         xDocTarget.Load(targetFilePath);
-        var targetXml = xDocSource.InnerXml;
+        var targetXml = xDocTarget.InnerXml;
 
         //Act
         var result = validsationService.IsValid(sourceXml, targetXml);
@@ -43,10 +43,10 @@ public class ValidationServiceTests
         var targetFilePath = Path.Combine(Directory.GetCurrentDirectory(), "TestData", "JNCC_Metadata_With_Missing_Fields.xml");
         var xDocTarget = new XmlDocument();
         xDocTarget.Load(targetFilePath);
-        var targetXml = xDocSource.InnerXml;
+        var targetXml = xDocTarget.InnerXml;
 
         //Act
-        var result = validsationService.IsValid(sourceXml, sourceXml);
+        var result = validsationService.IsValid(sourceXml, targetXml);
 
         //Assert
         result.Should().BeFalse();

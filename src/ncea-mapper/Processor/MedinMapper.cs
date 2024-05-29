@@ -1,21 +1,21 @@
 ﻿using AutoMapper;
-using ncea.mapper.Extensions;
-using Ncea.Mapper.Constants;
+using Microsoft.Extensions.Logging;
+using Ncea.Mapper.Enums;
+using Ncea.Mapper.Extensions;
 using Ncea.Mapper.Models;
 using Ncea.Mapper.Processors.Contracts;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace Ncea.Mapper.Processors;
 
 public class MedinMapper : IMapperService
-{    
-    private readonly ILogger<MedinMapper> _logger;
+{
     private readonly IMapper _mapper;
 
-    public MedinMapper(ILogger<MedinMapper> logger, IMapper mapper)
-    {     
-        _logger = logger;
+    public MedinMapper(IMapper mapper)
+    {
         _mapper = mapper;
     }
     public async Task<string> Transform(string mdcSchemaLocation, string harvestedData, CancellationToken cancellationToken = default)
@@ -37,8 +37,8 @@ public class MedinMapper : IMapperService
         var IsSourceAndTargetEqual = IsEqual(harvestedData, mdcMetadataStr);
         if (!IsSourceAndTargetEqual)
         {
-            _logger.LogInformation("Source and Target XMLs are not equal.Mapping is failed for DataSource: Medin, FileIdentifier: {fileIdentifier}", fileIdentifier);
-            throw new Exception();
+            var exceptionMessage = $"Mapper warning | Potential data loss identified for DataSource : {DataSource.Medin}, FileIdentifier : {fileIdentifier}";
+            throw new XmlSchemaValidationException(exceptionMessage);
         }
 
         //Populate MDC classifier fields
@@ -46,9 +46,7 @@ public class MedinMapper : IMapperService
         mdc_Metadata.nceaClassifierInfo = CreateNceaClassifierInfoNode();
 
         //Serialize MDC metadata object to XML string
-        var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);
-        _logger.LogInformation("Mapping completed for DataSource: Medin, FileIdentifier: {fileIdentifier}", fileIdentifier);
-        
+        var mdcMetadataString = mdc_Metadata.Serialize(nameSpaces);        
         return await Task.FromResult(mdcMetadataString!);
     }
     private static bool IsEqual(string sourceXmlStr, string targetXmlStr)
@@ -63,28 +61,28 @@ public class MedinMapper : IMapperService
         return (sourceXml.Descendants().Count() == targetXml.Descendants().Count());
     }
 
-    private static NceaClassifierInfo CreateNceaClassifierInfoNode()
-    {       
-        return new NceaClassifierInfo() { NC_Classifiers = [] };
-    }
-
     private static NceaIdentifiers CreateNceaIdentifiersNode(string fileIdentifier)
     {
-        var dataSource = Convert.ToString(ProcessorType.Medin);
+        var dataSource = Convert.ToString(DataSource.Medin);
         var nceaRefValue = string.Concat(dataSource, "_", fileIdentifier);
         return new NceaIdentifiers()
-                    {
-                        MasterReferenceID = new NceaIdentifiersMasterReferenceId()
-                        {
-                            catalogueEntry = new NceaIdentifiersMasterReferenceIdCatalogueEntry() 
-                            { 
-                                CharacterString = nceaRefValue
-                            },
-                            sourceSystemReferenceID = new NceaIdentifiersMasterReferenceIdSourceSystemReferenceId() 
-                            { 
-                                CharacterString = nceaRefValue
-                            }
-                        }
-                    };
+        {
+            MasterReferenceID = new NceaIdentifiersMasterReferenceId()
+            {
+                catalogueEntry = new NceaIdentifiersMasterReferenceIdCatalogueEntry()
+                {
+                    CharacterString = nceaRefValue
+                },
+                sourceSystemReferenceID = new NceaIdentifiersMasterReferenceIdSourceSystemReferenceId()
+                {
+                    CharacterString = nceaRefValue
+                }
+            }
+        };
+    }
+
+    private static NceaClassifierInfo CreateNceaClassifierInfoNode()
+    {
+        return new NceaClassifierInfo() { NC_Classifiers = [] };
     }
 }

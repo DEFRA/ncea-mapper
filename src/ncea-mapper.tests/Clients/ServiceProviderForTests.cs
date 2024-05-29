@@ -2,7 +2,7 @@
 using Moq;
 using Ncea.Mapper.Processors.Contracts;
 using Ncea.Mapper.Processors;
-using ncea.mapper.AutoMapper;
+using Ncea.Mapper.AutoMapper;
 
 namespace ncea_mapper.tests.Clients
 {

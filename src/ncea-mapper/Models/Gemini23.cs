@@ -213,23 +213,25 @@ namespace Ncea.Mapper.Models
     [XmlRoot(ElementName = "CI_ResponsibleParty", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class CI_ResponsibleParty
     {
+        [XmlElement(ElementName = "individualName", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public IndividualName IndividualName { get; set; }
         [XmlElement(ElementName = "organisationName", Namespace = "http://www.isotc211.org/2005/gmd")]
         public OrganisationName OrganisationName { get; set; }
+        [XmlElement(ElementName = "positionName", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public PositionName PositionName { get; set; }
         [XmlElement(ElementName = "contactInfo", Namespace = "http://www.isotc211.org/2005/gmd")]
         public ContactInfo ContactInfo { get; set; }
         [XmlElement(ElementName = "role", Namespace = "http://www.isotc211.org/2005/gmd")]
         public Role Role { get; set; }
-        [XmlElement(ElementName = "individualName", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public IndividualName IndividualName { get; set; }
-        [XmlElement(ElementName = "positionName", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public PositionName PositionName { get; set; }
+        
+        
     }
 
     [XmlRoot(ElementName = "contact", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class Contact
     {
         [XmlElement(ElementName = "CI_ResponsibleParty", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public CI_ResponsibleParty CI_ResponsibleParty { get; set; }
+        public List<CI_ResponsibleParty> CI_ResponsibleParty { get; set; }
     }
 
     [XmlRoot(ElementName = "dateStamp", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -506,7 +508,7 @@ namespace Ncea.Mapper.Models
     public class PointOfContact
     {
         [XmlElement(ElementName = "CI_ResponsibleParty", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public CI_ResponsibleParty CI_ResponsibleParty { get; set; }
+        public List<CI_ResponsibleParty> CI_ResponsibleParty { get; set; }
     }
 
     [XmlRoot(ElementName = "MD_MaintenanceFrequencyCode", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1115,7 +1117,7 @@ namespace Ncea.Mapper.Models
     public class DistributorContact
     {
         [XmlElement(ElementName = "CI_ResponsibleParty", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public CI_ResponsibleParty CI_ResponsibleParty { get; set; }
+        public List<CI_ResponsibleParty> CI_ResponsibleParty { get; set; }
     }
 
     [XmlRoot(ElementName = "MD_Distributor", Namespace = "http://www.isotc211.org/2005/gmd")]

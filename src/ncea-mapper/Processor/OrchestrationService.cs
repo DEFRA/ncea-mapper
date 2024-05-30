@@ -136,8 +136,6 @@ public class OrchestrationService : IOrchestrationService
     private async Task HandleException(ProcessMessageEventArgs args, Exception ex, BusinessException businessException)
     {
         _logger.LogError(businessException, ProcessorErrorMessage);
-        _logger.LogInformation(businessException, ProcessorErrorMessage);
-
         CustomLogger.LogErrorMessage(_logger, businessException.Message, ex);
 
         await args.AbandonMessageAsync(args.Message);

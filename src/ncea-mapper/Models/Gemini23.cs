@@ -1908,11 +1908,22 @@ namespace Ncea.Mapper.Models
         public string Real { get; set; }
     }
 
+    [XmlRoot(ElementName = "mediumNote", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class MediumNote
+    {
+        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string CharacterString { get; set; }
+        [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string NilReason { get; set; }
+    }
+
     [XmlRoot(ElementName = "MD_Medium", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class MD_Medium
     {
         [XmlElement(ElementName = "mediumFormat", Namespace = "http://www.isotc211.org/2005/gmd")]
         public string MediumFormat { get; set; }
+        [XmlElement(ElementName = "mediumNote", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public List<MediumNote> MediumNote { get; set; }
     }
 
     [XmlRoot(ElementName = "offLine", Namespace = "http://www.isotc211.org/2005/gmd")]

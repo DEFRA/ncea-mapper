@@ -27,7 +27,7 @@ public class Worker : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            using (_telemetryClient.StartOperation<RequestTelemetry>("operation"))
+            using (_telemetryClient.StartOperation<RequestTelemetry>("etl-mdc-mapping"))
             {
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
 

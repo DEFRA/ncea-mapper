@@ -502,18 +502,6 @@ namespace Ncea.Mapper.Models
         public string NilReason { get; set; }
     }
 
-    [XmlRoot(ElementName = "purpose", Namespace = "http://www.isotc211.org/2005/gmd")]
-    public class Purpose
-    {
-        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
-        public string CharacterString { get; set; }
-        [XmlElement(ElementName = "Anchor", Namespace = "http://www.isotc211.org/2005/gmx")]
-        public Anchor anchor { get; set; }
-
-        [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
-        public string NilReason { get; set; }
-    }
-
     [XmlRoot(ElementName = "pointOfContact", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class PointOfContact
     {

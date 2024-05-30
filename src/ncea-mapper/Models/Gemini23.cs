@@ -74,9 +74,9 @@ namespace Ncea.Mapper.Models
     public class CI_Telephone
     {
         [XmlElement(ElementName = "voice", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Voice Voice { get; set; }
+        public List<Voice> Voice { get; set; }
         [XmlElement(ElementName = "facsimile", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Facsimile Facsimile { get; set; }
+        public List<Facsimile> Facsimile { get; set; }
     }
 
     [XmlRoot(ElementName = "phone", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -165,6 +165,13 @@ namespace Ncea.Mapper.Models
         public CI_Address CI_Address { get; set; }
     }
 
+    [XmlRoot(ElementName = "hoursOfService", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class HoursOfService
+    {
+        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string CharacterString { get; set; }
+    }
+
     [XmlRoot(ElementName = "CI_Contact", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class CI_Contact
     {
@@ -172,6 +179,8 @@ namespace Ncea.Mapper.Models
         public Phone Phone { get; set; }
         [XmlElement(ElementName = "address", Namespace = "http://www.isotc211.org/2005/gmd")]
         public Address Address { get; set; }
+        [XmlElement(ElementName = "hoursOfService", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public HoursOfService HoursOfService { get; set; }
         [XmlElement(ElementName = "onlineResource", Namespace = "http://www.isotc211.org/2005/gmd")]
         public OnlineResource OnlineResource { get; set; }
     }
@@ -330,6 +339,13 @@ namespace Ncea.Mapper.Models
         public string NilReason { get; set; }
     }
 
+    [XmlRoot(ElementName = "editionDate", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class EditionDate
+    {
+        [XmlElement(ElementName = "Date", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string Date { get; set; }
+    }
+
     [XmlRoot(ElementName = "CI_Citation", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class CI_Citation
     {
@@ -339,10 +355,12 @@ namespace Ncea.Mapper.Models
         public List<Date> Date { get; set; }
         [XmlElement(ElementName = "identifier", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<Identifier> Identifier { get; set; }
+        [XmlElement(ElementName = "editionDate", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public List<EditionDate> EditionDate { get; set; }
         [XmlElement(ElementName = "alternateTitle", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<AlternateTitle> AlternateTitle { get; set; }
         [XmlElement(ElementName = "edition", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Edition Edition { get; set; }
+        public List<Edition> Edition { get; set; }
         [XmlElement(ElementName = "presentationForm", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<PresentationForm> PresentationForm { get; set; }
         [XmlElement(ElementName = "otherCitationDetails", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -459,6 +477,8 @@ namespace Ncea.Mapper.Models
     {
         [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
         public string CharacterString { get; set; }
+        [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string NilReason { get; set; }
     }
 
     [XmlRoot(ElementName = "positionName", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -466,6 +486,8 @@ namespace Ncea.Mapper.Models
     {
         [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
         public string CharacterString { get; set; }
+        [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string NilReason { get; set; }
     }
 
     [XmlRoot(ElementName = "purpose", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -505,15 +527,91 @@ namespace Ncea.Mapper.Models
         public MD_MaintenanceFrequencyCode MD_MaintenanceFrequencyCode { get; set; }
     }
 
+    [XmlRoot(ElementName = "dateOfNextUpdate", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class DateOfNextUpdate
+    {
+        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string CharacterString { get; set; }
+        [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string NilReason { get; set; }
+    }
+
     [XmlRoot(ElementName = "MD_MaintenanceInformation", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class MD_MaintenanceInformation
     {
         [XmlElement(ElementName = "maintenanceAndUpdateFrequency", Namespace = "http://www.isotc211.org/2005/gmd")]
         public MaintenanceAndUpdateFrequency MaintenanceAndUpdateFrequency { get; set; }
+        [XmlElement(ElementName = "dateOfNextUpdate", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public DateOfNextUpdate DateOfNextUpdate { get; set; }
         [XmlElement(ElementName = "updateScope", Namespace = "http://www.isotc211.org/2005/gmd")]
         public UpdateScope UpdateScope { get; set; }
         [XmlElement(ElementName = "maintenanceNote", Namespace = "http://www.isotc211.org/2005/gmd")]
         public MaintenanceNote MaintenanceNote { get; set; }
+    }
+
+    [XmlRoot(ElementName = "dateOfNextUpdate", Namespace = "http://www.isotc211.org/2005/srv")]
+    public class SrvDateOfNextUpdate
+    {
+        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string CharacterString { get; set; }
+        [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string NilReason { get; set; }
+    }
+
+    [XmlRoot(ElementName = "MD_ScopeCode", Namespace = "http://www.isotc211.org/2005/srv")]
+    public class SrvMD_ScopeCode
+    {
+        [XmlAttribute(AttributeName = "codeList")]
+        public string CodeList { get; set; }
+        [XmlAttribute(AttributeName = "codeListValue")]
+        public string CodeListValue { get; set; }
+        [XmlText]
+        public string Text { get; set; }
+    }
+
+    [XmlRoot(ElementName = "updateScope", Namespace = "http://www.isotc211.org/2005/srv")]
+    public class SrvUpdateScope
+    {
+        [XmlElement(ElementName = "MD_ScopeCode", Namespace = "http://www.isotc211.org/2005/srv")]
+        public List<SrvMD_ScopeCode> MD_ScopeCode { get; set; }
+    }
+
+    [XmlRoot(ElementName = "MD_MaintenanceFrequencyCode", Namespace = "http://www.isotc211.org/2005/srv")]
+    public class SrvMD_MaintenanceFrequencyCode
+    {
+        [XmlAttribute(AttributeName = "codeList")]
+        public string CodeList { get; set; }
+        [XmlAttribute(AttributeName = "codeListValue")]
+        public string CodeListValue { get; set; }
+        [XmlText]
+        public string Text { get; set; }
+    }
+
+    [XmlRoot(ElementName = "maintenanceAndUpdateFrequency", Namespace = "http://www.isotc211.org/2005/srv")]
+    public class SrvMaintenanceAndUpdateFrequency
+    {
+        [XmlElement(ElementName = "MD_MaintenanceFrequencyCode", Namespace = "http://www.isotc211.org/2005/srv")]
+        public SrvMD_MaintenanceFrequencyCode MD_MaintenanceFrequencyCode { get; set; }
+    }
+
+    [XmlRoot(ElementName = "maintenanceNote", Namespace = "http://www.isotc211.org/2005/srv")]
+    public class SrvMaintenanceNote
+    {
+        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string CharacterString { get; set; }
+    }
+
+    [XmlRoot(ElementName = "MD_MaintenanceInformation", Namespace = "http://www.isotc211.org/2005/srv")]
+    public class SrvMD_MaintenanceInformation
+    {
+        [XmlElement(ElementName = "maintenanceAndUpdateFrequency", Namespace = "http://www.isotc211.org/2005/srv")]
+        public SrvMaintenanceAndUpdateFrequency MaintenanceAndUpdateFrequency { get; set; }
+        [XmlElement(ElementName = "dateOfNextUpdate", Namespace = "http://www.isotc211.org/2005/srv")]
+        public SrvDateOfNextUpdate DateOfNextUpdate { get; set; }
+        [XmlElement(ElementName = "updateScope", Namespace = "http://www.isotc211.org/2005/srv")]
+        public SrvUpdateScope UpdateScope { get; set; }
+        [XmlElement(ElementName = "maintenanceNote", Namespace = "http://www.isotc211.org/2005/srv")]
+        public SrvMaintenanceNote MaintenanceNote { get; set; }
     }
 
     [XmlRoot(ElementName = "resourceMaintenance", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -521,6 +619,13 @@ namespace Ncea.Mapper.Models
     {
         [XmlElement(ElementName = "MD_MaintenanceInformation", Namespace = "http://www.isotc211.org/2005/gmd")]
         public MD_MaintenanceInformation MD_MaintenanceInformation { get; set; }
+    }
+
+    [XmlRoot(ElementName = "resourceMaintenance", Namespace = "http://www.isotc211.org/2005/srv")]
+    public class SrvResourceMaintenance
+    {
+        [XmlElement(ElementName = "MD_MaintenanceInformation", Namespace = "http://www.isotc211.org/2005/srv")]
+        public SrvMD_MaintenanceInformation MD_MaintenanceInformation { get; set; }
     }
 
     [XmlRoot(ElementName = "name", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -555,7 +660,7 @@ namespace Ncea.Mapper.Models
     public class ResourceFormat
     {
         [XmlElement(ElementName = "MD_Format", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public MD_Format MD_Format { get; set; }
+        public List<MD_Format> MD_Format { get; set; }
     }
 
     [XmlRoot(ElementName = "keyword", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -624,6 +729,9 @@ namespace Ncea.Mapper.Models
     [XmlRoot(ElementName = "accessConstraints", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class AccessConstraints
     {
+        [XmlElement(ElementName = "accessConstraints", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public List<AccessConstraints> ChildAccessConstraints { get; set; }
+
         [XmlElement(ElementName = "MD_RestrictionCode", Namespace = "http://www.isotc211.org/2005/gmd")]
         public MD_RestrictionCode MD_RestrictionCode { get; set; }
 
@@ -791,7 +899,7 @@ namespace Ncea.Mapper.Models
     public class EX_TemporalExtent
     {
         [XmlElement(ElementName = "extent", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Extent Extent { get; set; }
+        public List<Extent> Extent { get; set; }
     }
 
     [XmlRoot(ElementName = "temporalElement", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -856,6 +964,8 @@ namespace Ncea.Mapper.Models
     {
         [XmlAttribute(AttributeName = "title", Namespace = "http://www.w3.org/1999/xlink")]
         public string Title { get; set; }
+        [XmlAttribute(AttributeName = "type", Namespace = "http://www.w3.org/1999/xlink")]
+        public string Type { get; set; }
         [XmlAttribute(AttributeName = "href", Namespace = "http://www.w3.org/1999/xlink")]
         public string Href { get; set; }
         [XmlAttribute(AttributeName = "uuidref")]
@@ -960,9 +1070,9 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "serviceType", Namespace = "http://www.isotc211.org/2005/srv")]
         public ServiceType ServiceType { get; set; }
         [XmlElement(ElementName = "extent", Namespace = "http://www.isotc211.org/2005/srv")]
-        public Extent2 Extent2 { get; set; }
+        public List<Extent2> Extent2 { get; set; }
         [XmlElement(ElementName = "extent", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Extent Extent { get; set; }
+        public List<Extent> Extent { get; set; }
         [XmlElement(ElementName = "couplingType", Namespace = "http://www.isotc211.org/2005/srv")]
         public List<CouplingType> CouplingType { get; set; }
         [XmlElement(ElementName = "containsOperations", Namespace = "http://www.isotc211.org/2005/srv")]
@@ -974,11 +1084,13 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "spatialRepresentationType", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<SpatialRepresentationType> SpatialRepresentationTypes { get; set; }
         [XmlElement(ElementName = "spatialResolution", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public SpatialResolution SpatialResolution { get; set; }
+        public List<SpatialResolution> SpatialResolution { get; set; }
         [XmlElement(ElementName = "supplementalInformation", Namespace = "http://www.isotc211.org/2005/gmd")]
         public SupplementalInformation SupplementalInformation { get; set; }
         [XmlElement(ElementName = "operatesOn", Namespace = "http://www.isotc211.org/2005/srv")]
         public List<OperatesOn> OperatesOn { get; set; }
+        [XmlElement(ElementName = "resourceMaintenance", Namespace = "http://www.isotc211.org/2005/srv")]
+        public List<SrvResourceMaintenance> srvResourceMaintenance { get; set; }
     }
 
     [XmlRoot(ElementName = "identificationInfo", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -994,7 +1106,7 @@ namespace Ncea.Mapper.Models
     public class DistributionFormat
     {
         [XmlElement(ElementName = "MD_Format", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public MD_Format MD_Format { get; set; }
+        public List<MD_Format> MD_Format { get; set; }
         [XmlAttribute(AttributeName = "nilReason", Namespace = "http://www.isotc211.org/2005/gco")]
         public string NilReason { get; set; }
     }
@@ -1043,8 +1155,8 @@ namespace Ncea.Mapper.Models
         public Anchor anchor { get; set; }
     }
 
-    [XmlRoot(ElementName = "CI_OnLineFunctionCode", Namespace = "http://www.isotc211.org/2005/gmd")]
-    public class CI_OnLineFunctionCode
+    [XmlRoot(ElementName = "CI_OnlineFunctionCode", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class CI_OnlineFunctionCode
     {
         [XmlAttribute(AttributeName = "codeList")]
         public string CodeList { get; set; }
@@ -1057,8 +1169,10 @@ namespace Ncea.Mapper.Models
     [XmlRoot(ElementName = "function", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class Function
     {
+        [XmlElement(ElementName = "CI_OnlineFunctionCode", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public CI_OnlineFunctionCode CI_OnlineFunctionCode { get; set; }
         [XmlElement(ElementName = "CI_OnLineFunctionCode", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public CI_OnLineFunctionCode CI_OnLineFunctionCode { get; set; }
+        public CI_OnlineFunctionCode CI_OnLineFunctionCode { get; set; }
     }
 
     [XmlRoot(ElementName = "onLine", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1072,13 +1186,13 @@ namespace Ncea.Mapper.Models
     public class MD_DigitalTransferOptions
     {
         [XmlElement(ElementName = "onLine", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public OnLine OnLine { get; set; }
+        public List<OnLine> OnLine { get; set; }
         [XmlElement(ElementName = "unitsOfDistribution", Namespace = "http://www.isotc211.org/2005/gmd")]
         public string UnitsOfDistribution { get; set; }
         [XmlElement(ElementName = "transferSize", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public TransferSize TransferSize { get; set; }
+        public List<TransferSize> TransferSize { get; set; }
         [XmlElement(ElementName = "offLine", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public OffLine OffLine { get; set; }
+        public List<OffLine> OffLine { get; set; }
     }
 
     [XmlRoot(ElementName = "transferOptions", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1094,7 +1208,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "distributionFormat", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<DistributionFormat> DistributionFormat { get; set; }
         [XmlElement(ElementName = "distributor", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Distributor Distributor { get; set; }
+        public List<Distributor> Distributor { get; set; }
         [XmlElement(ElementName = "transferOptions", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<TransferOptions> TransferOptions { get; set; }
     }
@@ -1197,6 +1311,13 @@ namespace Ncea.Mapper.Models
         public Pass Pass { get; set; }
     }
 
+    [XmlRoot(ElementName = "measureIdentification", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class MeasureIdentification
+    {
+        [XmlElement(ElementName = "RS_Identifier", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public RS_Identifier RS_Identifier { get; set; }
+    }
+
     [XmlRoot(ElementName = "result", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class Result
     {
@@ -1211,6 +1332,8 @@ namespace Ncea.Mapper.Models
     {
         [XmlElement(ElementName = "result", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<Result> Result { get; set; }
+        [XmlElement(ElementName = "measureIdentification", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public MeasureIdentification MeasureIdentification { get; set; }
         [XmlElement(ElementName = "measureDescription", Namespace = "http://www.isotc211.org/2005/gmd")]
         public MeasureDescription MeasureDescription { get; set; }
     }
@@ -1327,6 +1450,8 @@ namespace Ncea.Mapper.Models
         public List<SpatialRepresentationInfo> SpatialRepresentationInfo { get; set; }
         [XmlElement(ElementName = "contentInfo", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<ContentInfo> ContentInfo { get; set; }
+        [XmlElement(ElementName = "characterSet", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public List<CharacterSet> CharacterSets { get; set; }
     }
 
     [XmlRoot(ElementName = "onlineResource", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1477,6 +1602,13 @@ namespace Ncea.Mapper.Models
         public MD_ProgressCode MD_ProgressCode { get; set; }
     }
 
+    [XmlRoot(ElementName = "credit", Namespace = "http://www.isotc211.org/2005/gmd")]
+    public class Credit
+    {
+        [XmlElement(ElementName = "CharacterString", Namespace = "http://www.isotc211.org/2005/gco")]
+        public string CharacterString { get; set; }
+    }
+
     [XmlRoot(ElementName = "MD_DataIdentification", Namespace = "http://www.isotc211.org/2005/gmd")]
     public class MD_DataIdentification
     {
@@ -1496,6 +1628,8 @@ namespace Ncea.Mapper.Models
         public List<GraphicOverview> GraphicOverview { get; set; }
         [XmlElement(ElementName = "descriptiveKeywords", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<DescriptiveKeywords> DescriptiveKeywords { get; set; }
+        [XmlElement(ElementName = "credit", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public List<Credit> Credit { get; set; }
         [XmlElement(ElementName = "distributionFormat", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<DistributionFormat> DistributionFormat { get; set; }
         [XmlElement(ElementName = "resourceConstraints", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1503,7 +1637,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "spatialRepresentationType", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<SpatialRepresentationType> SpatialRepresentationTypes { get; set; }
         [XmlElement(ElementName = "spatialResolution", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public SpatialResolution SpatialResolution { get; set; }
+        public List<SpatialResolution> SpatialResolution { get; set; }
         [XmlElement(ElementName = "status", Namespace = "http://www.isotc211.org/2005/gmd")]
         public Status Status { get; set; }
         [XmlElement(ElementName = "language", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1511,7 +1645,7 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "topicCategory", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<TopicCategory> TopicCategory { get; set; }
         [XmlElement(ElementName = "extent", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Extent Extent { get; set; }
+        public List<Extent> Extent { get; set; }
         [XmlElement(ElementName = "characterSet", Namespace = "http://www.isotc211.org/2005/gmd")]
         public List<CharacterSet> CharacterSets { get; set; }
         [XmlElement(ElementName = "supplementalInformation", Namespace = "http://www.isotc211.org/2005/gmd")]
@@ -1864,7 +1998,9 @@ namespace Ncea.Mapper.Models
         [XmlElement(ElementName = "dateTime", Namespace = "http://www.isotc211.org/2005/gmd")]
         public string DateTime { get; set; }
         [XmlElement(ElementName = "result", Namespace = "http://www.isotc211.org/2005/gmd")]
-        public Result Result { get; set; }
+        public List<Result> Result { get; set; }
+        [XmlElement(ElementName = "measureIdentification", Namespace = "http://www.isotc211.org/2005/gmd")]
+        public MeasureIdentification MeasureIdentification { get; set; }
     }
 
     [XmlRoot(ElementName = "measureDescription", Namespace = "http://www.isotc211.org/2005/gmd")]

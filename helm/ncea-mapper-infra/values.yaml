@@ -13,3 +13,8 @@ namespaceQueues:
       - roleName: QueueSender
       - roleName: QueueReceiver 
 
+storageAccounts:
+  - name: 'nceasrh'
+    owner: 'no'
+    roleAssignments:
+      - roleName: 'DataReader'

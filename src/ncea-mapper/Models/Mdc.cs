@@ -26,18 +26,18 @@ namespace Ncea.Mapper.Models
     [XmlRoot(ElementName = "Classifier", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
     public partial class NceaClassifierInfoClassifier
     {
-        [XmlElement(ElementName = "name", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
+        [XmlElement(ElementName = "Name", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
         public NceaClassifierInfoClassifierName name { get; set; }
-        [XmlElement(ElementName = "code", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
+        [XmlElement(ElementName = "Code", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
         public NceaClassifierInfoClassifierCode code { get; set; }
     }
 
-    [XmlRoot(ElementName = "name", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
+    [XmlRoot(ElementName = "Name", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
     public partial class NceaClassifierInfoClassifierName : CharacterStringBase
     {
     }
 
-    [XmlRoot(ElementName = "code", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
+    [XmlRoot(ElementName = "Code", Namespace = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc")]
     public partial class NceaClassifierInfoClassifierCode : CharacterStringBase
     {
     }

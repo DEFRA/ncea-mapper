@@ -1,0 +1,4 @@
+variables:
+- group: azureVariables-pre
+- group: MapperServiceVariables-pre
+- group: pipelineVariables

@@ -22,7 +22,7 @@ public class MedinMapperTests
     public async Task Process_ValidateMdcFields_For_Medin_Dataset_Metadata()
     {
         //Arrange
-        var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
+        var mdcNamespaceStr = "https://ncea-search.azure.defra.cloud/assets/xml-schema/mdc";
         OrchestrationServiceForTests.Get(out IConfiguration configuration,
                             out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
                             out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
@@ -66,7 +66,7 @@ public class MedinMapperTests
     public async Task Process_ValidateMdcFields_For_Medin_Series_Metadata()
     {
         //Arrange
-        var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
+        var mdcNamespaceStr = "https://ncea-search.azure.defra.cloud/assets/xml-schema/mdc";
         OrchestrationServiceForTests.Get(out IConfiguration configuration,
                             out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
                             out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
@@ -110,7 +110,7 @@ public class MedinMapperTests
     public async Task Process_ValidateMdcFields_For_Medin_Service_Metadata()
     {
         //Arrange
-        var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
+        var mdcNamespaceStr = "https://ncea-search.azure.defra.cloud/assets/xml-schema/mdc";
         OrchestrationServiceForTests.Get(out IConfiguration configuration,
                             out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
                             out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
@@ -154,7 +154,7 @@ public class MedinMapperTests
     public async Task Transform_WhenDataLossOccurs_ThenThrowXmlSchemaValidationException()
     {
         //Arrange
-        var mdcNamespaceStr = "https://github.com/DEFRA/ncea-geonetwork/tree/main/core-geonetwork/schemas/iso19139/src/main/plugin/iso19139/schema2007/mdc";
+        var mdcNamespaceStr = "https://ncea-search.azure.defra.cloud/assets/xml-schema/mdc";
         OrchestrationServiceForTests.Get(out IConfiguration configuration,
                             out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
                             out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,

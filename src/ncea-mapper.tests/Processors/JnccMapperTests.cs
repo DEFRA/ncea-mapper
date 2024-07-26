@@ -22,7 +22,7 @@ public class JnccMapperTests
     public async Task Process_ValidateMdcFields_For_Jncc_Dataset_Metadata()
     {
         //Arrange
-        var mdcNamespaceStr = "https://ncea-search.azure.defra.cloud/assets/xml-schema/mdc";
+        var mdcNamespaceStr = "https://ncea-search.azure.defra.cloud/mdc";
         OrchestrationServiceForTests.Get(out IConfiguration configuration,
                             out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
                             out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,
@@ -65,7 +65,7 @@ public class JnccMapperTests
     public async Task Transform_WhenDataLossOccurs_ThenThrowXmlSchemaValidationException()
     {
         //Arrange
-        var mdcNamespaceStr = "https://ncea-search.azure.defra.cloud/assets/xml-schema/mdc";
+        var mdcNamespaceStr = "https://ncea-search.azure.defra.cloud/mdc";
         OrchestrationServiceForTests.Get(out IConfiguration configuration,
                             out Mock<IAzureClientFactory<ServiceBusSender>> mockServiceBusSenderFactory,
                             out Mock<IAzureClientFactory<ServiceBusProcessor>> mockServiceBusProcessorFactory,

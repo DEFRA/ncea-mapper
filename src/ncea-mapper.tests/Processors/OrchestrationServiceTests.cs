@@ -272,7 +272,7 @@ public class OrchestrationServiceTests
         blobServiceMock.Setup(x => x.SaveAsync(It.IsAny<SaveBlobRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(It.IsAny<string>());
 
-        var messageBody = "{ \"FileIdentifier\":\"\",\"DataFormat\":\"xml\",\"DataStandard\":\"Gemini23\",\"DataSource\":\"Jncc\"}";
+        var messageBody = "{ \"FileIdentifier\":\"\",\"DataFormat\":\"xml\",\"DataStandard\":\"Gemini23\",\"DataSource\":\"Jncc\", \"MessageType\":\"Metadata\"}";
 
         var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData(messageBody), messageId: "messageId");
         var mockReceiver = new Mock<ServiceBusReceiver>();
@@ -314,7 +314,7 @@ public class OrchestrationServiceTests
         blobServiceMock.Setup(x => x.SaveAsync(It.IsAny<SaveBlobRequest>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new RequestFailedException(404, "Status: 404 (The specified blob does not exist.)"));
 
-        var messageBody = "{ \"FileIdentifier\":\"\",\"DataFormat\":\"xml\",\"DataStandard\":\"Gemini23\",\"DataSource\":\"Jncc\"}";
+        var messageBody = "{ \"FileIdentifier\":\"\",\"DataFormat\":\"xml\",\"DataStandard\":\"Gemini23\",\"DataSource\":\"Jncc\", \"MessageType\":\"Metadata\"}";
 
         var receivedMessage = ServiceBusModelFactory.ServiceBusReceivedMessage(body: new BinaryData(messageBody), messageId: "messageId");
         var mockReceiver = new Mock<ServiceBusReceiver>();

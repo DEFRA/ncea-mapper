@@ -72,27 +72,36 @@ public class OrchestrationService : IOrchestrationService
             var body = Encoding.UTF8.GetString(args.Message.Body);            
             var harvestedRecord =  JsonSerializer.Deserialize<HarvestedRecordMessage>(body, _serializerOptions)!;
 
-            dataSource = harvestedRecord.DataSource.ToString();
-            fileIdentifier = harvestedRecord.FileIdentifier;
+            if(harvestedRecord.MessageType == MessageType.Start)
+            {
+                _logger.LogInformation("Mapper summary | Mapping started for DataSource : {dataSource}.", dataSource);
+            } else if (harvestedRecord.MessageType == MessageType.End)
+            {
+                _logger.LogInformation("Mapper summary | Mapping ended for DataSource : {dataSource}.", dataSource);
+            } else if (harvestedRecord.MessageType == MessageType.Metadata)
+            {
+                dataSource = harvestedRecord.DataSource.ToString();
+                fileIdentifier = harvestedRecord.FileIdentifier;
 
-            _logger.LogInformation("Mapper summary | Mapping started for DataSource : {dataSource}, FileIdentifier : {fileIdentifier}", dataSource, fileIdentifier);
+                _logger.LogInformation("Mapper summary | Mapping in progress for DataSource : {dataSource}, FileIdentifier : {fileIdentifier}", dataSource, fileIdentifier);
 
-            var dataSourceNameInLowerCase = dataSource.ToLowerInvariant();
-            var fileExtension = (harvestedRecord.DataFormat == DataFormat.Csv) ? ".csv" : ".xml";
-            var fileName = string.Concat(harvestedRecord.FileIdentifier, fileExtension);
-            var mapperStagingContainer = $"{dataSourceNameInLowerCase}-{_mapperStagingContainerSuffix}";
+                var dataSourceNameInLowerCase = dataSource.ToLowerInvariant();
+                var fileExtension = (harvestedRecord.DataFormat == DataFormat.Csv) ? ".csv" : ".xml";
+                var fileName = string.Concat(harvestedRecord.FileIdentifier, fileExtension);
+                var mapperStagingContainer = $"{dataSourceNameInLowerCase}-{_mapperStagingContainerSuffix}";
 
-            var request = new GetBlobContentRequest(fileName, dataSourceNameInLowerCase);
-            var harvestedContent = await _blobService.GetContentAsync(request, args.CancellationToken);
+                var request = new GetBlobContentRequest(fileName, dataSourceNameInLowerCase);
+                var harvestedContent = await _blobService.GetContentAsync(request, args.CancellationToken);
 
-            var mdcMappedData = await _serviceProvider
-                .GetRequiredKeyedService<IMapperService>(dataSource)
-                .Transform(_mdcSchemaLocation!, harvestedContent);
+                var mdcMappedData = await _serviceProvider
+                    .GetRequiredKeyedService<IMapperService>(dataSource)
+                    .Transform(_mdcSchemaLocation!, harvestedContent);
 
-            var xmlStream = new MemoryStream(Encoding.UTF8.GetBytes(mdcMappedData));            
-            await _blobService.SaveAsync(new SaveBlobRequest(xmlStream, fileName, mapperStagingContainer), args.CancellationToken);
+                var xmlStream = new MemoryStream(Encoding.UTF8.GetBytes(mdcMappedData));
+                await _blobService.SaveAsync(new SaveBlobRequest(xmlStream, fileName, mapperStagingContainer), args.CancellationToken);
+            }
 
-            var mdcMappedRecord = new MdcMappedRecordMessage(harvestedRecord.FileIdentifier, harvestedRecord.DataSource);
+            var mdcMappedRecord = new MdcMappedRecordMessage(harvestedRecord.FileIdentifier, harvestedRecord.DataSource, harvestedRecord.MessageType);
             var messageToEnricher = JsonSerializer.Serialize(mdcMappedRecord, _serializerOptions);
 
             await SendMessageAsync(messageToEnricher);

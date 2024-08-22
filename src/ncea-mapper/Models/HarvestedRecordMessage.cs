@@ -7,5 +7,6 @@ public class HarvestedRecordMessage
     public DataFormat DataFormat { get; set; }
     public DataStandard DataStandard { get; set; }
     public DataSource DataSource { get; set; }
+    public MessageType MessageType { get; set; }
 }
 

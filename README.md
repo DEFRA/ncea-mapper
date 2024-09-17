@@ -2,6 +2,18 @@
 
 This is the code repository for the NCEA Metadata Mapper ETL Service codebase.
 
+## Process Flow
+
+- Receive message from **harvested-queue**
+- If the MessageType is **Start** or **End** resend the message to **mapped-queue**
+- If the MessageType is **Metadata**, read metadata file content from Azure Blob Storage (which saved by Harvester service) based File Identifier
+- Transform the metadata xml content into MDC xml format
+- Save the MDC formated xml file into mapper staging container in Azure Blob Storage ( *jncc-mapper-staging | medin-mapper-staging* )
+- Send message to the **mapped-queue** with the following details,
+    - FileIdentifier
+    - DataSource ( *Medin | Jncc* )
+    - MessageType ( *Start | Metadata | End* )
+
 # Prerequisites
 
 Before proceeding, ensure you have the following installed:

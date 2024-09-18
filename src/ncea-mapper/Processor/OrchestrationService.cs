@@ -75,10 +75,12 @@ public class OrchestrationService : IOrchestrationService
             if(harvestedRecord.MessageType == MessageType.Start)
             {
                 _logger.LogInformation("Mapper summary | Mapping started for DataSource : {dataSource}.", dataSource);
-            } else if (harvestedRecord.MessageType == MessageType.End)
+            }
+            else if (harvestedRecord.MessageType == MessageType.End)
             {
                 _logger.LogInformation("Mapper summary | Mapping ended for DataSource : {dataSource}.", dataSource);
-            } else if (harvestedRecord.MessageType == MessageType.Metadata)
+            }
+            else if (harvestedRecord.MessageType == MessageType.Metadata)
             {
                 dataSource = harvestedRecord.DataSource.ToString();
                 fileIdentifier = harvestedRecord.FileIdentifier;

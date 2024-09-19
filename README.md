@@ -40,7 +40,7 @@ Before proceeding, ensure you have the following installed:
 ***BlobStorage Configuration:***
     *BlobStorageUri* to connect to Azure Blob Storage, to create containers per DataSource and to Save the XML files for the respective data source.
        
-    "BlobStorageUri": "https://devnceinfst1401.blob.core.windows.net"
+    "BlobStorageUri": "https://[Azure Storage Account Name].blob.core.windows.net"
 
 ***ApplicationInsights Configuration:***
     *ApplicationInsights* to enable logging and monitoring.   
